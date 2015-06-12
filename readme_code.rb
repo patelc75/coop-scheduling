@@ -9,9 +9,9 @@ require 'rubygems'
 require 'google_calendar'
 
 # Create an instance of the calendar.
-cal = Google::Calendar.new(:client_id     => "419624150549-g443ff1nnjh52u6kbslilfjj25o7epvq.apps.googleusercontent.com",
-                           :client_secret => "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCzEmIWTCDJWq+s\n2z2rfcIyLMfy1uASugicwajQfReOgDVD6IZ6XgaFsthDG58tasDU4jjeyjUitSjE\n0P6U+IVJLcIesA1GyUqMEnCFIBGiAvZWNtueOcRpLIg65ozzI5aMN07iSxQHB34u\ngiO3SEfKgTkTV0aS+WCQ3Fk3L0mURudEHvIqD3auFrvxBu9Kij9RyDyEVv81k5GZ\nb3UiWHf2q65zAa/G8aP2H4KBuu3P1a3PRZlcAN5rGnMiQVnhkzZQnZGVwOPYsyM9\nDfFcSpqDBToiK2BhGubZxId/NqitcJ+2Cilg695vwxFExZJUn7v3WvO0LShBYXLA\nAwC3pxZ1AgMBAAECggEAaXpbkny3F0O2lN/zHG+QEtPz1uOgywcPiZ483MnCNWrp\ndR2jELMPrnMhFa5QfYUTHpI+I2UCFXaWFBBy1Lbqc6djX4Yd2+M3aPh3lMLGACM0\njKX1iObH/ZeAiwlAXvtIc0Ek0wCcRGOyfJylgxEtUGf7gZv38xy3N7zDRFEzSwXY\nCMePS7B7nRC7X5uHDb3WF3BzTwnvOkiWToeFVn4HgHmIWiWcXxuj5MOt/s7OQDMH\ndEj6myYX+lzU0HFBc3TicQct7PJtZ6/ucUfa81in1huGSG5bTo//rEYU2fGsYgh8\nFoetqgtDRN1CQOuMADceHH6PP+yxjJBWqR1d6SE9AQKBgQDjIdu3Y51pw5ULInRY\nadkMBetXBanqui+rH812EkThVVwDh3JRd4ILpt1vUWy+FxrSTkT57MBbTapXc1q9\n5UYoKZ4y0h3PU9CCy7SlEf1uonyedEY64zK5t/jIfuaNKQ3y+W+0Z/wF1yMvAKmQ\nnkp70a7rsf+piBsaS6XDgrnqtQKBgQDJ1Mt7bNIe3TpTMxNHKfqUillTty6zHYH9\nmUlfVXKFGXSxbYoxOwD8gP99EoYwoU4ibvtCL8ocTwsq0JGsIPi4xw+BU8roQkuI\nArEbCTOZRF0Mk3onYDBM1Ezvhkf8/LXSMSRkokugHt1dXg9p7fb8maQgy1P7UsVQ\nFRuL0+sUwQKBgQCY/YVx0beGNid+iIa1xxZb8uDCjR4W7bKOIa3Tihq7bTO9bM6j\n8Uu3bX5aLQ6CPC3k2rO7ZK1s0rOalCjbIERRaTcWJFHQBTS95ViYl7WNgAVQ9iEY\nKVFRp4n8Av5otu6ea0XCzwgDJxab4mZU80pYfLTGLe930iXvYGUXfEaewQKBgDR/\ntHojYTiEBQLVO0N8iOCQaBHdiTkwCLsFX09783DpoS/xtUt+9I+5ojtPUTZfDuro\nAVVDBwh8CwSVAf9LCEdQCBl0yUfGzszPHnBQ4WoRnT6DMfgCDi493tFDFYCZ31WQ\nUM4YZSF+RcheihXcvy0PbeDV4r9x1T8yblrdwb1BAoGBAIU0OuU95Quo/BPt8EEh\n4qFsiXWtVxi6izEi2d4B/6dI22LR3J5JK6mlceqp8ciO9UuQT/IcAW8YMBSvlqut\ndEQw3Eg0Oj6YXoyUPVJZVnOnZahIL8ThoW+NGEUCxD3Cxj4cTvSu8tsVXfYtLel1\nu+VL8WP6WRWZA4i9XXdGhoGN\n",
-                           :calendar      => YOUR_CALENDAR_ID,
+cal = Google::Calendar.new(:client_id     => "419624150549-7plpq38mughrvbnt3jde6vf5urge64ga.apps.googleusercontent.com",
+                           :client_secret => "4TJFhxJ1QrS8Ev8jM57DYemb",
+                           :calendar      => "7dib4m37gjfmi971t952fh6cac@group.calendar.google.com",
                            :redirect_url  => "urn:ietf:wg:oauth:2.0:oob" # this is what Google uses for 'applications'
                            )
 
