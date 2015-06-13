@@ -7,6 +7,8 @@
 
 require 'rubygems'
 require 'google_calendar'
+require 'json'
+require 'chronic'
 
 # Create an instance of the calendar.
 cal = Google::Calendar.new(:client_id     => "419624150549-7plpq38mughrvbnt3jde6vf5urge64ga.apps.googleusercontent.com",
@@ -15,6 +17,7 @@ cal = Google::Calendar.new(:client_id     => "419624150549-7plpq38mughrvbnt3jde6
                            :redirect_url  => "urn:ietf:wg:oauth:2.0:oob" # this is what Google uses for 'applications'
                            )
 
+=begin
 puts "Do you already have a refresh token? (y/n)"
 has_token = $stdin.gets.chomp
 
@@ -42,8 +45,47 @@ else
   # Note: You can also pass your refresh_token to the constructor and it will login at that time.
 
 end
+=end
 
-cal.find_events_in_range(start_time, end_time, :expand_recurring_events => true)
+
+refresh_token = "1/-JJFnXmK-2Wyb0ImBpXwvaapSIf_JQ89OfSW8ARO5wU"
+cal.login_with_refresh_token(refresh_token)
+monday_gcal = Chronic.parse "last monday 8am" #=> 2015-06-08 09:00:00 -0400
+friday_gcal = monday_gcal + (5*24*60*60)
+events = cal.find_events_in_range(monday_gcal, friday_gcal, :expand_recurring_events => true)
+puts "TOTAL EVENTS: #{events.count} from #{monday_gcal.to_s} to #{friday_gcal.to_s}"
+#puts cal.events
+
+# Query events
+#cal.find_events('your search string')
+
+specials_file = File.read('specials.json')
+periods_file = File.read('periods.json')
+
+specials = JSON.parse(specials_file)
+periods = JSON.parse(periods_file)
+
+specials.each do |special|
+  num_per_week = special["num_per_week"].to_i
+  num_per_week.times do |num|
+    periods.each do |period|
+      period_start = period["start_time"]
+      period_end = period["end_time"]
+
+      #TODO: instead of hard coding to the first event, write a method to loop through all the events
+      #pulled from gcal ('events') and make sure period_start_monday doesn't
+      date_only_no_time = Time.parse(events[0].start_time).getlocal.strftime("%Y-%m-%d")
+      first_event = Chronic.parse "#{date_only_no_time} #{period_start}" #=> 2015-06-08 09:00:00 -0400
+
+      #gcal_event = Time.parse(events[0].start_time).getlocal
+      breakpoint
+    end
+  end
+end
+breakpoint 
+
+
+
 # event = cal.create_event do |e|
 #   e.title = 'A Cool Event'
 #   e.start_time = Time.now
@@ -58,10 +100,3 @@ cal.find_events_in_range(start_time, end_time, :expand_recurring_events => true)
 #   e.color_id = 3  # google allows colors 0-11
 # end
 
-puts event
-
-# All events
-puts cal.events
-
-# Query events
-puts cal.find_events('your search string')
