@@ -12,7 +12,6 @@
         "specialist": "tbd",
         "room": "rec_room",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "1"        
     },
     {
@@ -20,7 +19,6 @@
         "specialist": "tbd",
         "room": "art_room",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "1"  
     },
     {
@@ -28,7 +26,6 @@
         "specialist": "sophie",
         "room": "roof, science_room",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "1"        
     },
     {
@@ -36,7 +33,6 @@
         "specialist": "rotem",
         "room": "wood_shop_room",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "2"  
     },
     {
@@ -44,7 +40,6 @@
         "specialist": "dan",
         "room": "music_room",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "1_or_2"        
     },
     {
@@ -52,7 +47,6 @@
         "specialist": "ingrid",
         "room": "library",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "1" 
     }, 
     {
@@ -60,7 +54,6 @@
         "specialist": "nicole",
         "room": "science_lab",
         "num_per_week": "1",
-        "max_per_day": "1",
         "num_groups": "1_or_2"        
     }
 ]

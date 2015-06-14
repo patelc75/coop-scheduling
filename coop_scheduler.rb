@@ -10,68 +10,7 @@ require 'google_calendar'
 require 'json'
 require 'chronic'
 
-
-cal_bumblebee = Google::Calendar.new(
-                           :client_id     => "419624150549-7plpq38mughrvbnt3jde6vf5urge64ga.apps.googleusercontent.com",
-                           :client_secret => "4TJFhxJ1QrS8Ev8jM57DYemb",
-                           :calendar      => "7dib4m37gjfmi971t952fh6cac@group.calendar.google.com",
-                           :redirect_url  => "urn:ietf:wg:oauth:2.0:oob" # this is what Google uses for 'applications'
-                           )
-
-refresh_token = "1/-JJFnXmK-2Wyb0ImBpXwvaapSIf_JQ89OfSW8ARO5wU"
-cal_bumblebee.login_with_refresh_token(refresh_token)
-monday_gcal = Chronic.parse "last monday 8am" #=> 2015-06-08 09:00:00 -0400
-friday_gcal = monday_gcal + (5*24*60*60)
-events = cal_bumblebee.find_events_in_range(monday_gcal, friday_gcal, :expand_recurring_events => true)
-puts "TOTAL EVENTS: #{events.count} from #{monday_gcal.to_s} to #{friday_gcal.to_s}"
-#puts cal_bumblebee.events
-
-# Query events
-#cal_bumblebee.find_events('your search string')
-
-specials_file = File.read('specials.json')
-periods_file = File.read('periods.json')
-
-specials = JSON.parse(specials_file)
-periods = JSON.parse(periods_file)
-
-specials.each do |special|
-  num_per_week = special["num_per_week"].to_i
-  num_per_week.times do |num|
-    periods.each do |period|
-      period_start = period["start_time"]
-      period_end = period["end_time"]
-
-      #TODO: instead of hard coding to the first event, write a method to loop through all the events
-      #pulled from gcal ('events') and make sure period_start_monday doesn't
-      date_only_no_time = Time.parse(events[0].start_time).getlocal.strftime("%Y-%m-%d")
-      first_event = Chronic.parse "#{date_only_no_time} #{period_start}" #=> 2015-06-08 09:00:00 -0400
-
-      #gcal_event = Time.parse(events[0].start_time).getlocal
-      breakpoint
-    end
-  end
-end
-
-
-# event = cal_bumblebee.create_event do |e|
-#   e.title = 'A Cool Event'
-#   e.start_time = Time.now
-#   e.end_time = Time.now + (60 * 60) # seconds * min
-# end
-
-# puts event
-
-# event = cal_bumblebee.find_or_create_event_by_id(event.id) do |e|
-#   e.title = 'An Updated Cool Event'
-#   e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
-#   e.color_id = 3  # google allows colors 0-11
-# end
-
-
-
 def prompt_for_refresh_token(cal)
-=begin
   puts "Do you already have a refresh token? (y/n)"
   has_token = $stdin.gets.chomp
 
@@ -97,7 +36,78 @@ def prompt_for_refresh_token(cal)
     cal.login_with_refresh_token(refresh_token)
 
     # Note: You can also pass your refresh_token to the constructor and it will login at that time.
-
   end
-=end
 end
+
+def find_slot_in_class_cal(cal)
+  monday_gcal = Chronic.parse "last monday 8am" #=> 2015-06-08 09:00:00 -0400
+  friday_gcal = monday_gcal + (5*24*60*60)
+  events = cal.find_events_in_range(monday_gcal, friday_gcal, :expand_recurring_events => true)
+  puts "TOTAL EVENTS: #{events.count} from #{monday_gcal.to_s} to #{friday_gcal.to_s}"
+  #puts cal_bumblebee.events
+end
+
+def setup_calendar(calendar_id)
+  cal = Google::Calendar.new(
+                             :client_id     => "419624150549-7plpq38mughrvbnt3jde6vf5urge64ga.apps.googleusercontent.com",
+                             :client_secret => "4TJFhxJ1QrS8Ev8jM57DYemb",
+                             :calendar      => calendar_id,
+                             :redirect_url  => "urn:ietf:wg:oauth:2.0:oob" # this is what Google uses for 'applications'
+                             )
+
+  #Uncomment only if hard coded refresh token doesn't work
+  #prompt_for_refresh_token(cal)
+
+  refresh_token = "1/-JJFnXmK-2Wyb0ImBpXwvaapSIf_JQ89OfSW8ARO5wU"
+  #cal.login_with_auth_code
+  cal.login_with_refresh_token(refresh_token)
+  return cal
+  # Query events
+  #cal_bumblebee.find_events('your search string')
+end
+
+specials_file = File.read('specials.json')
+cal_file = File.read('classes.json')
+specials = JSON.parse(specials_file)
+class_cals = JSON.parse(cal_file)
+
+=begin
+periods_file = File.read('periods.json')
+periods = JSON.parse(periods_file)
+    periods.each do |period|
+      period_start = period["start_time"]
+      period_end = period["end_time"]
+=end
+
+specials.each do |special|
+  num_per_week = special["num_per_week"].to_i
+  num_per_week.times do |num|
+    class_cals.each do |class_cal|
+      cal_bumblebee = setup_calendar(class_cal["calendar_id"])
+      find_slot_in_class_cal(cal_bumblebee)
+      #TODO: instead of hard coding to the first event, write a method to loop through all the events pulled from gcal ('events') and make sure period_start_monday doesn't
+      #date_only_no_time = Time.parse(events[0].start_time).getlocal.strftime("%Y-%m-%d")
+      #first_event = Chronic.parse "#{date_only_no_time} #{period_start}" #=> 2015-06-08 09:00:00 -0400
+
+      #gcal_event = Time.parse(events[0].start_time).getlocal
+    end
+  end
+end
+
+
+# event = cal_bumblebee.create_event do |e|
+#   e.title = 'A Cool Event'
+#   e.start_time = Time.now
+#   e.end_time = Time.now + (60 * 60) # seconds * min
+# end
+
+# puts event
+
+# event = cal_bumblebee.find_or_create_event_by_id(event.id) do |e|
+#   e.title = 'An Updated Cool Event'
+#   e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
+#   e.color_id = 3  # google allows colors 0-11
+# end
+
+
+
