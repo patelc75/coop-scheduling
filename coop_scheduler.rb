@@ -10,43 +10,12 @@ require 'google_calendar'
 require 'json'
 require 'chronic'
 
-# Create an instance of the calendar.
+
 cal = Google::Calendar.new(:client_id     => "419624150549-7plpq38mughrvbnt3jde6vf5urge64ga.apps.googleusercontent.com",
                            :client_secret => "4TJFhxJ1QrS8Ev8jM57DYemb",
                            :calendar      => "7dib4m37gjfmi971t952fh6cac@group.calendar.google.com",
                            :redirect_url  => "urn:ietf:wg:oauth:2.0:oob" # this is what Google uses for 'applications'
                            )
-
-=begin
-puts "Do you already have a refresh token? (y/n)"
-has_token = $stdin.gets.chomp
-
-if has_token.downcase != 'y'
-
-  # A user needs to approve access in order to work with their calendars.
-  puts "Visit the following web page in your browser and approve access."
-  puts cal.authorize_url
-  puts "\nCopy the code that Google returned and paste it here:"
-
-  # Pass the ONE TIME USE access code here to login and get a refresh token that you can use for access from now on.
-  refresh_token = cal.login_with_auth_code( $stdin.gets.chomp )
-
-  puts "\nMake sure you SAVE YOUR REFRESH TOKEN so you don't have to prompt the user to approve access again."
-  puts "your refresh token is:\n\t#{refresh_token}\n"
-  puts "Press return to continue"
-  $stdin.gets.chomp
-
-else
-
-  puts "Enter your refresh token"
-  refresh_token = $stdin.gets.chomp
-  cal.login_with_refresh_token(refresh_token)
-
-  # Note: You can also pass your refresh_token to the constructor and it will login at that time.
-
-end
-=end
-
 
 refresh_token = "1/-JJFnXmK-2Wyb0ImBpXwvaapSIf_JQ89OfSW8ARO5wU"
 cal.login_with_refresh_token(refresh_token)
@@ -100,3 +69,36 @@ breakpoint
 #   e.color_id = 3  # google allows colors 0-11
 # end
 
+
+
+def prompt_for_refresh_token
+=begin
+  puts "Do you already have a refresh token? (y/n)"
+  has_token = $stdin.gets.chomp
+
+  if has_token.downcase != 'y'
+
+    # A user needs to approve access in order to work with their calendars.
+    puts "Visit the following web page in your browser and approve access."
+    puts cal.authorize_url
+    puts "\nCopy the code that Google returned and paste it here:"
+
+    # Pass the ONE TIME USE access code here to login and get a refresh token that you can use for access from now on.
+    refresh_token = cal.login_with_auth_code( $stdin.gets.chomp )
+
+    puts "\nMake sure you SAVE YOUR REFRESH TOKEN so you don't have to prompt the user to approve access again."
+    puts "your refresh token is:\n\t#{refresh_token}\n"
+    puts "Press return to continue"
+    $stdin.gets.chomp
+
+  else
+
+    puts "Enter your refresh token"
+    refresh_token = $stdin.gets.chomp
+    cal.login_with_refresh_token(refresh_token)
+
+    # Note: You can also pass your refresh_token to the constructor and it will login at that time.
+
+  end
+=end
+end
