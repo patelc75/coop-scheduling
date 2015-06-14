@@ -4,15 +4,15 @@
         "specialist": "carla",
         "room": "library, music",
         "num_per_week": "5",
-        "max_per_day": "1",
-        "num_groups": "1"        
+        "num_groups": "1",
+        "duration": "30 mins"
     },
     {
         "title": "wood_shop",
         "specialist": "rotem",
         "room": "wood_shop_room",
         "num_per_week": "1",
-        "max_per_day": "1",
-        "num_groups": "1"                
+        "num_groups": "1",
+        "duration": "30 mins"                     
     }
 ]
