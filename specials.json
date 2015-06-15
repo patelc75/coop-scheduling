@@ -4,56 +4,57 @@
         "specialist": "carla",
         "room": "library, music",
         "num_per_week": "5",
-        "num_groups": "1",
-        "duration": "30 mins"
+        "num_of_groups": "1",
+        "duration": "30 mins",
+        "google_calendar_id": "ifvvqfc6hu2ir0p4i75cpo5qfc@group.calendar.google.com"
     },
     {
         "title": "movement",
         "specialist": "tbd",
         "room": "rec_room",
         "num_per_week": "1",
-        "num_groups": "1"        
+        "num_of_groups": "1"        
     },
     {
         "title": "art",
         "specialist": "tbd",
         "room": "art_room",
         "num_per_week": "1",
-        "num_groups": "1"  
+        "num_of_groups": "1"  
     },
     {
         "title": "gardening",
         "specialist": "sophie",
         "room": "roof, science_room",
         "num_per_week": "1",
-        "num_groups": "1"        
+        "num_of_groups": "1"        
     },
     {
         "title": "wood_shop",
         "specialist": "rotem",
         "room": "wood_shop_room",
         "num_per_week": "1",
-        "num_groups": "2"  
+        "num_of_groups": "2"  
     },
     {
         "title": "music",
         "specialist": "dan",
         "room": "music_room",
         "num_per_week": "1",
-        "num_groups": "1_or_2"        
+        "num_of_groups": "1_or_2"        
     },
     {
         "title": "library",
         "specialist": "ingrid",
         "room": "library",
         "num_per_week": "1",
-        "num_groups": "1" 
+        "num_of_groups": "1" 
     }, 
     {
         "title": "science",
         "specialist": "nicole",
         "room": "science_lab",
         "num_per_week": "1",
-        "num_groups": "1_or_2"        
+        "num_of_groups": "1_or_2"        
     }
 ]
