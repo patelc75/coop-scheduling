@@ -17,7 +17,6 @@ $monday_start = Chronic.parse "last monday 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
 $daily_ending_hour = 16
-$calendar_hash = {}
 
 def prompt_for_refresh_token(cal)
   puts "Do you already have a refresh token? (y/n)"
@@ -58,14 +57,11 @@ def print_event_info (cal, events, start_date, end_date)
 end
 
 def look_for_conflict(event_to_check, cal)
-  #events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
-  #print_event_info(cal, events, $monday_start, $friday_end)
-  events = $calendar_hash[cal.cal_id]
 
   event_to_check_start_time = Chronic.parse event_to_check.start_time
   event_to_check_end_time = Chronic.parse event_to_check.end_time
 #e event_to_check_start_time.getlocal.to_s + " to " + event_to_check_end_time.getlocal.to_s
-  events.each do |event|
+  cal.fetched_events.each do |event|
     event_start_time = Chronic.parse event.start_time
     event_end_time = Chronic.parse event.end_time
     if ((event_to_check_start_time >= event_start_time && event_to_check_start_time < event_end_time) || (event_to_check_end_time > event_start_time && event_to_check_end_time <= event_end_time))
@@ -82,18 +78,21 @@ def find_empty_slot_with_no_conflict(class_cal, specialist_cal, special_title, s
 
   special_to_schedule = Google::Event.new
   special_to_schedule.start_time = $monday_start
-  special_to_schedule.end_time = $monday_start + 30*60 #add 30 mins
+  special_to_schedule.end_time = $monday_start + special_duration*60 #add 30 mins
   specialist_conflict = class_conflict = true
-  #e Chronic.parse(special_to_schedule.start_time).getlocal.to_s + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.to_s
 
   while(Chronic.parse(special_to_schedule.end_time) < $friday_end)
+    
     puts special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z")      
     class_conflict = look_for_conflict(special_to_schedule, class_cal)  
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal)
       if specialist_conflict == false
-        debugger
-        puts "WE FOUND A SLOT! (todo: schedule a special in gcal via code)"
+        puts "SPECIAL SCHEDULED:" + special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") 
+        class_cal.create_event do |e|
+          e.title = special_title
+          #e.where = special_title
+        end
         break        
       end
     end
@@ -125,18 +124,23 @@ def fetch_calendar(calendar_id)
 
   #Uncomment only if hard coded refresh token doesn't work
   #prompt_for_refresh_token(cal)
+
   refresh_token = "1/-JJFnXmK-2Wyb0ImBpXwvaapSIf_JQ89OfSW8ARO5wU"
   cal.login_with_refresh_token(refresh_token)
 
+  #add dynamic variables in the calendar class
   class << cal
-    attr_accessor :cal_id
+    attr_accessor :cal_id, :fetched_events
   end
   cal.cal_id = calendar_id
   events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
-  $calendar_hash[cal.cal_id] = events
+  cal.fetched_events = events
 
   return cal
-  #cal.find_events('your search string')
+end
+
+def setup_calendar(input_cal)
+  input_cal
 end
 
 specials_file = File.read('specials.json')
@@ -144,24 +148,18 @@ cal_file = File.read('classes.json')
 specials = JSON.parse(specials_file)
 class_cals = JSON.parse(cal_file)
 
-=begin
-periods_file = File.read('periods.json')
-periods = JSON.parse(periods_file)
-    periods.each do |period|
-      period_start = period["start_time"]
-      period_end = period["end_time"]
-=end
-
 specials.each do |special|
   num_per_week = special["num_per_week"].to_i
 
-  cal_specialist = fetch_calendar(special["google_calendar_id"])
+  cal_specialist_input = fetch_calendar(special["google_calendar_id"])
+  #cal_specialist_output = setup_calendar(cal_specialist_input)
+
   num_per_week.times do |num|
     class_cals.each do |class_cal_json|
       #TODO: cache bumblebee cal since it will be created 5 times
       cal_bumblebee = fetch_calendar(class_cal_json["specialist_calendar_id"])
       speical_title_for_log = special["title"]+ " #" +(num+1).to_s
-      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist, speical_title_for_log, special["num_per_week"].to_i)
+      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist_input, speical_title_for_log, special["duration_in_mins"].to_i)
     end
   end
 end
@@ -181,5 +179,13 @@ end
 #   e.color_id = 3  # google allows colors 0-11
 # end
 
+
+=begin
+periods_file = File.read('periods.json')
+periods = JSON.parse(periods_file)
+    periods.each do |period|
+      period_start = period["start_time"]
+      period_end = period["end_time"]
+=end
 
 
