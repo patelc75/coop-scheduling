@@ -159,8 +159,9 @@ specials.each do |special|
   num_per_week.times do |num|
     class_cals.each do |class_cal_json|
       #TODO: cache bumblebee cal since it will be created 5 times
-      cal_bumblebee = fetch_calendar(class_cal_json["calendar_id"])
-      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist, special["title"]+ " #" +(num+1).to_s)
+      cal_bumblebee = fetch_calendar(class_cal_json["specialist_calendar_id"])
+      speical_title_for_log = special["title"]+ " #" +(num+1).to_s
+      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist, speical_title_for_log)
     end
   end
 end
