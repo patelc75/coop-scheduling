@@ -77,7 +77,7 @@ def look_for_conflict(event_to_check, cal)
 end
 
 
-def find_empty_slot_with_no_conflict(class_cal, specialist_cal, special_title)
+def find_empty_slot_with_no_conflict(class_cal, specialist_cal, special_title, special_duration)
   #print_event_info(class_cal, class_events, $monday_start, $friday_end)
 
   special_to_schedule = Google::Event.new
@@ -98,17 +98,17 @@ def find_empty_slot_with_no_conflict(class_cal, specialist_cal, special_title)
       end
     end
 
-    new_start_time = Chronic.parse(special_to_schedule.start_time) + 15*60
-    new_end_time = Chronic.parse(special_to_schedule.start_time) + 45*60
+    new_start_time = Chronic.parse(special_to_schedule.start_time) + 5*60 #5 minute padding
+    new_end_time = Chronic.parse(special_to_schedule.start_time) + special_duration+5*60
     if new_end_time.getlocal.hour <= $daily_ending_hour #4pm
-      special_to_schedule.start_time = Chronic.parse(special_to_schedule.start_time) + 15*60
-      special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + 30*60
+      special_to_schedule.start_time = Chronic.parse(special_to_schedule.start_time) + 5*60
+      special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
     else
       new_start_time = new_start_time + 24*60*60 #jump to the next day
       date_only_no_time = new_start_time.getlocal.strftime("%Y-%m-%d")
       new_start_time = Chronic.parse "#{date_only_no_time} 8am" 
       special_to_schedule.start_time = new_start_time
-      special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + 30*60
+      special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
       puts 
       puts "Trying " + new_start_time.strftime("%A")
     end
@@ -161,7 +161,7 @@ specials.each do |special|
       #TODO: cache bumblebee cal since it will be created 5 times
       cal_bumblebee = fetch_calendar(class_cal_json["specialist_calendar_id"])
       speical_title_for_log = special["title"]+ " #" +(num+1).to_s
-      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist, speical_title_for_log)
+      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist, speical_title_for_log, special["num_per_week"].to_i)
     end
   end
 end
