@@ -140,7 +140,14 @@ def fetch_calendar(calendar_id)
 end
 
 def setup_calendar(input_cal)
-  input_cal
+  
+
+  input_cal.fetched_events.each do |e|
+    class_cal.create_event do |e|
+      e.title = special_title
+      #e.where = special_title
+    end    
+  end  
 end
 
 specials_file = File.read('specials.json')
@@ -152,7 +159,7 @@ specials.each do |special|
   num_per_week = special["num_per_week"].to_i
 
   cal_specialist_input = fetch_calendar(special["google_calendar_id"])
-  #cal_specialist_output = setup_calendar(cal_specialist_input)
+  cal_specialist_output = setup_calendar(cal_specialist_input)
 
   num_per_week.times do |num|
     class_cals.each do |class_cal_json|
