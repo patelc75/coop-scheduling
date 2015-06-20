@@ -13,10 +13,17 @@ require 'google_calendar'
 require 'chronic'
 require 'time_difference'
 
-$monday_start = Chronic.parse "last monday 8am" #=> 2015-06-08 09:00:00 -0400
+$monday_start = Chronic.parse "monday june 22 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
 $daily_ending_hour = 16
+
+COOP_GCAL = {
+  "GCAL_CLIENT_ID" => "195386345709-fp79atbaq3rf0vok9j2vrocpr0j6geme.apps.googleusercontent.com",
+  "GCAL_CLIENT_SECRET" => "abb1zxRw6T-eVmjBN8jk3-dM",
+  "GCAL_REDIRECT_URL" => "urn:ietf:wg:oauth:2.0:oob",
+  "GCAL_REFRESH_TOKEN" => "1/sZkYElDVrTpg-D4ABf01Pt9RQNpO5ZUY0X8Bddn0DSM"
+}
 
 def prompt_for_refresh_token(cal)
   puts "Do you already have a refresh token? (y/n)"
@@ -38,11 +45,9 @@ def prompt_for_refresh_token(cal)
     $stdin.gets.chomp
 
   else
-
     puts "Enter your refresh token"
     refresh_token = $stdin.gets.chomp
     cal.login_with_refresh_token(refresh_token)
-
     # Note: You can also pass your refresh_token to the constructor and it will login at that time.
   end
 end
@@ -73,29 +78,37 @@ def look_for_conflict(event_to_check, cal)
 end
 
 
-def find_empty_slot_with_no_conflict(class_cal, specialist_cal, special_title, special_duration)
-  #print_event_info(class_cal, class_events, $monday_start, $friday_end)
+def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_cal_input, class_cal_output, specialist_cal_output)
+  special_title = special["title"]+ " #" +(num+1).to_s
+  special_duration = special["duration_in_mins"].to_i
 
   special_to_schedule = Google::Event.new
+  special_to_schedule.title = special_title
   special_to_schedule.start_time = $monday_start
   special_to_schedule.end_time = $monday_start + special_duration*60 #add 30 mins
   specialist_conflict = class_conflict = true
 
-  while(Chronic.parse(special_to_schedule.end_time) < $friday_end)
-    
+  while(Chronic.parse(special_to_schedule.end_time) < $friday_end)    
     puts special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z")      
-    class_conflict = look_for_conflict(special_to_schedule, class_cal)  
+    class_conflict = look_for_conflict(special_to_schedule, class_cal_output)  
     if class_conflict == false
-      specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal)
+      specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_output)
       if specialist_conflict == false
         puts "SPECIAL SCHEDULED:" + special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") 
-        class_cal.create_event do |e|
-          e.title = special_title
-          #e.where = special_title
+        class_cal_output.create_event do |output_event|
+          output_event.title = special_to_schedule.title
+          output_event.start_time = special_to_schedule.start_time
+          output_event.end_time = special_to_schedule.end_time
         end
+        specialist_cal_output.create_event do |output_event|
+          output_event.title = special_to_schedule.title
+          output_event.start_time = special_to_schedule.start_time
+          output_event.end_time = special_to_schedule.end_time
+        end    
+        debugger    
         break        
       end
-    end
+    end 
 
     new_start_time = Chronic.parse(special_to_schedule.start_time) + 5*60 #5 minute padding
     new_end_time = Chronic.parse(special_to_schedule.start_time) + special_duration+5*60
@@ -114,40 +127,55 @@ def find_empty_slot_with_no_conflict(class_cal, specialist_cal, special_title, s
   end
 end
 
-def fetch_calendar(calendar_id)
+
+def fetch_existing_calendar(creds_hash, calendar_id)
   cal = Google::Calendar.new(
-                             :client_id     => "419624150549-7plpq38mughrvbnt3jde6vf5urge64ga.apps.googleusercontent.com",
-                             :client_secret => "4TJFhxJ1QrS8Ev8jM57DYemb",
-                             :calendar      => calendar_id,
-                             :redirect_url  => "urn:ietf:wg:oauth:2.0:oob" # this is what Google uses for 'applications'
-                             )
+           :client_id     => creds_hash["GCAL_CLIENT_ID"],
+           :client_secret => creds_hash["GCAL_CLIENT_SECRET"],
+           :calendar      => calendar_id,
+           :redirect_url  => creds_hash["GCAL_REDIRECT_URL"]
+        )
 
   #Uncomment only if hard coded refresh token doesn't work
   #prompt_for_refresh_token(cal)
 
-  refresh_token = "1/-JJFnXmK-2Wyb0ImBpXwvaapSIf_JQ89OfSW8ARO5wU"
-  cal.login_with_refresh_token(refresh_token)
+  cal.login_with_refresh_token(creds_hash["GCAL_REFRESH_TOKEN"])
 
   #add dynamic variables in the calendar class
   class << cal
-    attr_accessor :cal_id, :fetched_events
+    attr_accessor :fetched_events
   end
-  cal.cal_id = calendar_id
   events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
   cal.fetched_events = events
 
   return cal
 end
 
-def setup_calendar(input_cal)
+def setup_new_calendar(input_cal, creds_hash) 
+  output_cal_name = input_cal.summary + " Filled"
+  output_cal = Google::Calendar.create(
+                 :client_id     => creds_hash["GCAL_CLIENT_ID"],
+                 :client_secret => creds_hash["GCAL_CLIENT_SECRET"],
+                 :summary => output_cal_name,
+                 :redirect_url => creds_hash["GCAL_REDIRECT_URL"],
+                 :refresh_token => creds_hash["GCAL_REFRESH_TOKEN"] # this is what Google uses 
+               )
   
-
-  input_cal.fetched_events.each do |e|
-    class_cal.create_event do |e|
-      e.title = special_title
-      #e.where = special_title
+  #prompt_for_refresh_token(output_cal)
+  puts "Calendar created: " + output_cal_name
+  input_cal.fetched_events.each do |input_event|
+    output_cal.create_event do |output_event|
+      output_event.title = input_event.title
+      output_event.start_time = input_event.start_time
+      output_event.end_time = input_event.end_time
     end    
-  end  
+  end
+
+  class << output_cal
+    attr_accessor :fetched_events
+  end
+  output_cal.fetched_events = input_cal.fetched_events
+  return output_cal
 end
 
 specials_file = File.read('specials.json')
@@ -157,42 +185,20 @@ class_cals = JSON.parse(cal_file)
 
 specials.each do |special|
   num_per_week = special["num_per_week"].to_i
-
-  cal_specialist_input = fetch_calendar(special["google_calendar_id"])
-  cal_specialist_output = setup_calendar(cal_specialist_input)
-
+  cal_specialist_input = fetch_existing_calendar(COOP_GCAL,special["google_calendar_id"])
+  cal_specialist_output = setup_new_calendar(cal_specialist_input, COOP_GCAL)
   num_per_week.times do |num|
     class_cals.each do |class_cal_json|
-      #TODO: cache bumblebee cal since it will be created 5 times
-      cal_bumblebee = fetch_calendar(class_cal_json["specialist_calendar_id"])
-      speical_title_for_log = special["title"]+ " #" +(num+1).to_s
-      find_empty_slot_with_no_conflict(cal_bumblebee, cal_specialist_input, speical_title_for_log, special["duration_in_mins"].to_i)
+      cal_class_input = fetch_existing_calendar(COOP_GCAL, class_cal_json["class_calendar_id"])
+      cal_class_output = setup_new_calendar(cal_class_input, COOP_GCAL)
+      find_empty_slot_with_no_conflict(
+          special,
+          num,
+          cal_class_input, 
+          cal_specialist_input,
+          cal_class_output,
+          cal_specialist_output
+      )
     end
   end
 end
-
-
-# event = cal_bumblebee.create_event do |e|
-#   e.title = 'A Cool Event'
-#   e.start_time = Time.now
-#   e.end_time = Time.now + (60 * 60) # seconds * min
-# end
-
-# puts event
-
-# event = cal_bumblebee.find_or_create_event_by_id(event.id) do |e|
-#   e.title = 'An Updated Cool Event'
-#   e.end_time = Time.now + (60 * 60 * 2) # seconds * min * hours
-#   e.color_id = 3  # google allows colors 0-11
-# end
-
-
-=begin
-periods_file = File.read('periods.json')
-periods = JSON.parse(periods_file)
-    periods.each do |period|
-      period_start = period["start_time"]
-      period_end = period["end_time"]
-=end
-
-

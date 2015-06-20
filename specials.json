@@ -4,9 +4,9 @@
         "specialist": "carla",
         "room": "library, music",
         "num_per_week": "5",
-        "num_of_groups": "1",
-        "duration_in_mins": "30",
-        "google_calendar_id": "ifvvqfc6hu2ir0p4i75cpo5qfc@group.calendar.google.com"
+        "num_of_groups": "2",
+        "duration_in_mins": "30 mins",
+        "google_calendar_id": "thecoopschool.org_i28t6js6u9mc8i2c62t48g18eg@group.calendar.google.com"
     },
     {
         "title": "movement",
@@ -41,7 +41,7 @@
         "specialist": "dan",
         "room": "music_room",
         "num_per_week": "1",
-        "num_of_groups": "1_or_2"        
+        "num_of_groups": "1_or_2" //see Specialists - schedule preferences 2015-2016
     },
     {
         "title": "library",
