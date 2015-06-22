@@ -13,7 +13,7 @@ We are using this Ruby google calendar wrapper: https://github.com/northworld/go
 
 * Install these gems:
 
-```
+```ruby
 gem install 'google_calendar' #may need to install locally
 gem install 'chronic'
 gem install 'time_difference'
@@ -24,8 +24,10 @@ gem install 'time_difference'
 
 ### Useful debugging statements running `rdebug coop_scheduler.rb`
 
+```ruby
 e event_to_check_start_time.getlocal.to_s + " to " + event_to_check_end_time.getlocal.to_s
 e Chronic.parse(special_to_schedule.start_time).getlocal.to_s + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.to_s
+```
 
 ### Naming convention of Google calendars
 
