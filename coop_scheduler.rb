@@ -18,13 +18,6 @@ five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
 $daily_ending_hour = 16
 
-COOP_GCAL = {
-  "GCAL_CLIENT_ID" => "195386345709-fp79atbaq3rf0vok9j2vrocpr0j6geme.apps.googleusercontent.com",
-  "GCAL_CLIENT_SECRET" => "abb1zxRw6T-eVmjBN8jk3-dM",
-  "GCAL_REDIRECT_URL" => "urn:ietf:wg:oauth:2.0:oob",
-  "GCAL_REFRESH_TOKEN" => "1/sZkYElDVrTpg-D4ABf01Pt9RQNpO5ZUY0X8Bddn0DSM"
-}
-
 def prompt_for_refresh_token(cal)
   puts "Do you already have a refresh token? (y/n)"
   has_token = $stdin.gets.chomp
@@ -128,18 +121,18 @@ def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_c
 end
 
 
-def fetch_existing_calendar(creds_hash, calendar_id)
+def fetch_existing_calendar(calendar_id)
   cal = Google::Calendar.new(
-           :client_id     => creds_hash["GCAL_CLIENT_ID"],
-           :client_secret => creds_hash["GCAL_CLIENT_SECRET"],
+           :client_id     => ENV["GCAL_CLIENT_ID"],
+           :client_secret => ENV["GCAL_CLIENT_SECRET"],
            :calendar      => calendar_id,
-           :redirect_url  => creds_hash["GCAL_REDIRECT_URL"]
+           :redirect_url  => ENV["GCAL_REDIRECT_URL"]
         )
 
   #Uncomment only if hard coded refresh token doesn't work
   #prompt_for_refresh_token(cal)
 
-  cal.login_with_refresh_token(creds_hash["GCAL_REFRESH_TOKEN"])
+  cal.login_with_refresh_token(ENV["GCAL_REFRESH_TOKEN"])
 
   #add dynamic variables in the calendar class
   class << cal
@@ -151,14 +144,14 @@ def fetch_existing_calendar(creds_hash, calendar_id)
   return cal
 end
 
-def setup_new_calendar(input_cal, creds_hash) 
+def setup_new_calendar(input_cal) 
   output_cal_name = input_cal.summary + " Filled"
   output_cal = Google::Calendar.create(
-                 :client_id     => creds_hash["GCAL_CLIENT_ID"],
-                 :client_secret => creds_hash["GCAL_CLIENT_SECRET"],
+                 :client_id     => ENV["GCAL_CLIENT_ID"],
+                 :client_secret => ENV["GCAL_CLIENT_SECRET"],
                  :summary => output_cal_name,
-                 :redirect_url => creds_hash["GCAL_REDIRECT_URL"],
-                 :refresh_token => creds_hash["GCAL_REFRESH_TOKEN"] # this is what Google uses 
+                 :redirect_url => ENV["GCAL_REDIRECT_URL"],
+                 :refresh_token => ENV["GCAL_REFRESH_TOKEN"] # this is what Google uses 
                )
   
   #prompt_for_refresh_token(output_cal)
@@ -185,12 +178,12 @@ class_cals = JSON.parse(cal_file)
 
 specials.each do |special|
   num_per_week = special["num_per_week"].to_i
-  cal_specialist_input = fetch_existing_calendar(COOP_GCAL,special["google_calendar_id"])
-  cal_specialist_output = setup_new_calendar(cal_specialist_input, COOP_GCAL)
+  cal_specialist_input = fetch_existing_calendar(special["google_calendar_id"])
+  cal_specialist_output = setup_new_calendar(cal_specialist_input)
   num_per_week.times do |num|
     class_cals.each do |class_cal_json|
-      cal_class_input = fetch_existing_calendar(COOP_GCAL, class_cal_json["class_calendar_id"])
-      cal_class_output = setup_new_calendar(cal_class_input, COOP_GCAL)
+      cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
+      cal_class_output = setup_new_calendar(cal_class_input)
       find_empty_slot_with_no_conflict(
           special,
           num,
