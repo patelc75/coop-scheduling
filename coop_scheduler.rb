@@ -71,7 +71,7 @@ def look_for_conflict(event_to_check, cal)
 end
 
 def store_special_in_cal_events(special_to_schedule, special_title, class_cal, specialist_cal)
-  puts "SPECIAL SCHEDULED:" + special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") 
+  puts "\n" + special_title + " SCHEDULED for " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
 
   #All the fetched events from GCal API had status="confirmed", but allowed to write to it
   #special_to_schedule.status = "confirmed" 
@@ -89,6 +89,10 @@ def store_special_in_cal_events(special_to_schedule, special_title, class_cal, s
   #   output_event.start_time = special_to_schedule.start_time
   #   output_event.end_time = special_to_schedule.end_time
   # end   
+
+  #TODO ISSUE #2 If more than one per week, create the rest at the same time for the rest of the week
+  #num_per_week = special["num_per_week"].to_i
+
 end
 
 def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
@@ -103,8 +107,8 @@ def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
   return special_to_schedule
 end
 
-def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_cal_input)
-  special_title = special["title"]+ " #" +(num+1).to_s
+def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_input)
+  special_title = special["title"]+ " #" + 1.to_s
   special_duration = special["duration_in_mins"].to_i
 
   special_to_schedule = Google::Event.new
@@ -113,8 +117,10 @@ def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_c
   special_to_schedule.end_time = $monday_start + special_duration*60 #add 30 mins
   specialist_conflict = class_conflict = true
 
+    puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
+    print "Now, trying "
   while(Chronic.parse(special_to_schedule.end_time) < $friday_end)    
-    puts special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z")      
+    print Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%H:%M%p %Z") + ", "      
     class_conflict = look_for_conflict(special_to_schedule, class_cal_input)  
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input)
@@ -195,22 +201,27 @@ specials = JSON.parse(specials_file)
 class_cals = JSON.parse(cal_file)
 
 specials.each do |special|
-  num_per_week = special["num_per_week"].to_i
   cal_specialist_input = fetch_existing_calendar(special["google_calendar_id"])
 
   if !cal_specialist_input.nil?
     #cal_specialist_output = setup_new_calendar(cal_specialist_input)
-    num_per_week.times do |num|
-      class_cals.each do |class_cal_json|
-        cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
-        #cal_class_output = setup_new_calendar(cal_class_input)
-        find_empty_slot_with_no_conflict(
-            special,
-            num,
-            cal_class_input, 
-            cal_specialist_input
-        )
-      end
+    class_cals.each do |class_cal_json|
+      cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
+      #cal_class_output = setup_new_calendar(cal_class_input)
+      find_empty_slot_with_no_conflict(
+          special,
+          cal_class_input, 
+          cal_specialist_input
+      )
+      puts "Class schedule:"
+      
+      #TODO: Loop through events for prettier format:
+      puts cal_class_input.fetched_events
+      #cal_class_input.fetched_events.each do |event|
+      #  puts event
+      #end
     end
   end
 end
+
+
