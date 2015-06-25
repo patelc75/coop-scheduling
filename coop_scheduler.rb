@@ -70,6 +70,31 @@ def look_for_conflict(event_to_check, cal)
   return false
 end
 
+def write_special_to_calendars(special_to_schedule, special_title, class_cal_output, specialist_cal_output)
+  puts "SPECIAL SCHEDULED:" + special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") 
+  class_cal_output.create_event do |output_event|
+    output_event.title = special_to_schedule.title
+    output_event.start_time = special_to_schedule.start_time
+    output_event.end_time = special_to_schedule.end_time
+  end
+  specialist_cal_output.create_event do |output_event|
+    output_event.title = special_to_schedule.title
+    output_event.start_time = special_to_schedule.start_time
+    output_event.end_time = special_to_schedule.end_time
+  end   
+end
+
+def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
+  new_start_time = new_start_time + 24*60*60 #jump to the next day
+  date_only_no_time = new_start_time.getlocal.strftime("%Y-%m-%d")
+  new_start_time = Chronic.parse "#{date_only_no_time} 8am" 
+  special_to_schedule.start_time = new_start_time
+  special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
+
+  puts 
+  puts "Trying " + new_start_time.strftime("%A")
+  return special_to_schedule
+end
 
 def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_cal_input, class_cal_output, specialist_cal_output)
   special_title = special["title"]+ " #" +(num+1).to_s
@@ -87,17 +112,7 @@ def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_c
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_output)
       if specialist_conflict == false
-        puts "SPECIAL SCHEDULED:" + special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") 
-        class_cal_output.create_event do |output_event|
-          output_event.title = special_to_schedule.title
-          output_event.start_time = special_to_schedule.start_time
-          output_event.end_time = special_to_schedule.end_time
-        end
-        specialist_cal_output.create_event do |output_event|
-          output_event.title = special_to_schedule.title
-          output_event.start_time = special_to_schedule.start_time
-          output_event.end_time = special_to_schedule.end_time
-        end    
+        write_special_to_calendars(special_to_schedule, special_title, class_cal_output, specialist_cal_output)
         debugger    
         break        
       end
@@ -109,13 +124,7 @@ def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_c
       special_to_schedule.start_time = Chronic.parse(special_to_schedule.start_time) + 5*60
       special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
     else
-      new_start_time = new_start_time + 24*60*60 #jump to the next day
-      date_only_no_time = new_start_time.getlocal.strftime("%Y-%m-%d")
-      new_start_time = Chronic.parse "#{date_only_no_time} 8am" 
-      special_to_schedule.start_time = new_start_time
-      special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
-      puts 
-      puts "Trying " + new_start_time.strftime("%A")
+      special_to_schedule = get_new_start_time_for_next_day(new_start_time)
     end
   end
 end
