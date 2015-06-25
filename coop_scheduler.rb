@@ -70,18 +70,25 @@ def look_for_conflict(event_to_check, cal)
   return false
 end
 
-def write_special_to_calendars(special_to_schedule, special_title, class_cal_output, specialist_cal_output)
+def store_special_in_cal_events(special_to_schedule, special_title, class_cal, specialist_cal)
   puts "SPECIAL SCHEDULED:" + special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") 
-  class_cal_output.create_event do |output_event|
-    output_event.title = special_to_schedule.title
-    output_event.start_time = special_to_schedule.start_time
-    output_event.end_time = special_to_schedule.end_time
-  end
-  specialist_cal_output.create_event do |output_event|
-    output_event.title = special_to_schedule.title
-    output_event.start_time = special_to_schedule.start_time
-    output_event.end_time = special_to_schedule.end_time
-  end   
+
+  #All the fetched events from GCal API had status="confirmed", but allowed to write to it
+  #special_to_schedule.status = "confirmed" 
+
+  class_cal.fetched_events << special_to_schedule
+  specialist_cal.fetched_events << special_to_schedule
+  # This is to write a single event to a calendar 
+  # class_cal_output.create_event do |output_event|
+  #   output_event.title = special_to_schedule.title
+  #   output_event.start_time = special_to_schedule.start_time
+  #   output_event.end_time = special_to_schedule.end_time
+  # end
+  # specialist_cal_output.create_event do |output_event|
+  #   output_event.title = special_to_schedule.title
+  #   output_event.start_time = special_to_schedule.start_time
+  #   output_event.end_time = special_to_schedule.end_time
+  # end   
 end
 
 def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
@@ -96,7 +103,7 @@ def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
   return special_to_schedule
 end
 
-def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_cal_input, class_cal_output, specialist_cal_output)
+def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_cal_input)
   special_title = special["title"]+ " #" +(num+1).to_s
   special_duration = special["duration_in_mins"].to_i
 
@@ -108,12 +115,11 @@ def find_empty_slot_with_no_conflict(special, num, class_cal_input, specialist_c
 
   while(Chronic.parse(special_to_schedule.end_time) < $friday_end)    
     puts special_title + ": " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z")      
-    class_conflict = look_for_conflict(special_to_schedule, class_cal_output)  
+    class_conflict = look_for_conflict(special_to_schedule, class_cal_input)  
     if class_conflict == false
-      specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_output)
+      specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input)
       if specialist_conflict == false
-        write_special_to_calendars(special_to_schedule, special_title, class_cal_output, specialist_cal_output)
-        debugger    
+        store_special_in_cal_events(special_to_schedule, special_title, class_cal_input, specialist_cal_input)
         break        
       end
     end 
@@ -131,26 +137,29 @@ end
 
 
 def fetch_existing_calendar(calendar_id)
-  cal = Google::Calendar.new(
-           :client_id     => ENV["GCAL_CLIENT_ID"],
-           :client_secret => ENV["GCAL_CLIENT_SECRET"],
-           :calendar      => calendar_id,
-           :redirect_url  => ENV["GCAL_REDIRECT_URL"]
-        )
+  if (calendar_id)
+    cal = Google::Calendar.new(
+             :client_id     => ENV["GCAL_CLIENT_ID"],
+             :client_secret => ENV["GCAL_CLIENT_SECRET"],
+             :calendar      => calendar_id,
+             :redirect_url  => ENV["GCAL_REDIRECT_URL"]
+          )
 
-  #Uncomment only if hard coded refresh token doesn't work
-  #prompt_for_refresh_token(cal)
+    #Uncomment only if hard coded refresh token doesn't work
+    #prompt_for_refresh_token(cal)
 
-  cal.login_with_refresh_token(ENV["GCAL_REFRESH_TOKEN"])
+    cal.login_with_refresh_token(ENV["GCAL_REFRESH_TOKEN"])
 
-  #add dynamic variables in the calendar class
-  class << cal
-    attr_accessor :fetched_events
+    #add dynamic variables in the calendar class
+    class << cal
+      attr_accessor :fetched_events
+    end
+    events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
+    cal.fetched_events = events
+    return cal
+  else
+    return nil
   end
-  events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
-  cal.fetched_events = events
-
-  return cal
 end
 
 def setup_new_calendar(input_cal) 
@@ -188,19 +197,20 @@ class_cals = JSON.parse(cal_file)
 specials.each do |special|
   num_per_week = special["num_per_week"].to_i
   cal_specialist_input = fetch_existing_calendar(special["google_calendar_id"])
-  cal_specialist_output = setup_new_calendar(cal_specialist_input)
-  num_per_week.times do |num|
-    class_cals.each do |class_cal_json|
-      cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
-      cal_class_output = setup_new_calendar(cal_class_input)
-      find_empty_slot_with_no_conflict(
-          special,
-          num,
-          cal_class_input, 
-          cal_specialist_input,
-          cal_class_output,
-          cal_specialist_output
-      )
+
+  if !cal_specialist_input.nil?
+    #cal_specialist_output = setup_new_calendar(cal_specialist_input)
+    num_per_week.times do |num|
+      class_cals.each do |class_cal_json|
+        cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
+        #cal_class_output = setup_new_calendar(cal_class_input)
+        find_empty_slot_with_no_conflict(
+            special,
+            num,
+            cal_class_input, 
+            cal_specialist_input
+        )
+      end
     end
   end
 end
