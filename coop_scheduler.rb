@@ -91,17 +91,6 @@ def store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
 
   class_cal.fetched_events << special_to_schedule
   specialist_cal.fetched_events << special_to_schedule
-  # This is to write a single event to a calendar 
-  # class_cal_output.create_event do |output_event|
-  #   output_event.title = special_to_schedule.title
-  #   output_event.start_time = special_to_schedule.start_time
-  #   output_event.end_time = special_to_schedule.end_time
-  # end
-  # specialist_cal_output.create_event do |output_event|
-  #   output_event.title = special_to_schedule.title
-  #   output_event.start_time = special_to_schedule.start_time
-  #   output_event.end_time = special_to_schedule.end_time
-  # end   
 
   #TODO ISSUE #2 If more than one per week, create the rest at the same time for the rest of the week
   #num_per_week = special["num_per_week"].to_i
@@ -188,7 +177,7 @@ def fetch_existing_calendar(calendar_id)
   end
 end
 
-def setup_new_calendar(input_cal) 
+def create_new_cal_and_write_to_gcal_api(input_cal) 
   output_cal_name = input_cal.summary + " Filled"
   output_cal = CoopCalendar.create(
                  :client_id     => ENV["GCAL_CLIENT_ID"],
