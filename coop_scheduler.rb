@@ -13,6 +13,19 @@ require 'google_calendar'
 require 'chronic'
 require 'time_difference'
 
+
+class CoopCalendar < Google::Calendar
+  attr_accessor :fetched_events
+
+  def pretty_print
+    puts summary
+    fetched_events.each do |event|
+      print Chronic.parse(event.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%H:%M%p %Z") + " " + event.title
+        puts 
+    end
+  end
+end
+
 $monday_start = Chronic.parse "monday june 22 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
@@ -48,7 +61,7 @@ end
 
 
 def print_event_info (cal, events, start_date, end_date)
-  puts cal.summary
+  puts "\n" + cal.summary
   puts "TOTAL EVENTS: #{events.count}"
   puts "DATE RANGE: #{start_date.getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z")} to #{end_date.getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z")}"
   puts 
@@ -144,7 +157,7 @@ end
 
 def fetch_existing_calendar(calendar_id)
   if (calendar_id)
-    cal = Google::Calendar.new(
+    cal = CoopCalendar.new(
              :client_id     => ENV["GCAL_CLIENT_ID"],
              :client_secret => ENV["GCAL_CLIENT_SECRET"],
              :calendar      => calendar_id,
@@ -156,10 +169,6 @@ def fetch_existing_calendar(calendar_id)
 
     cal.login_with_refresh_token(ENV["GCAL_REFRESH_TOKEN"])
 
-    #add dynamic variables in the calendar class
-    class << cal
-      attr_accessor :fetched_events
-    end
     events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
     cal.fetched_events = events
     return cal
@@ -170,7 +179,7 @@ end
 
 def setup_new_calendar(input_cal) 
   output_cal_name = input_cal.summary + " Filled"
-  output_cal = Google::Calendar.create(
+  output_cal = CoopCalendar.create(
                  :client_id     => ENV["GCAL_CLIENT_ID"],
                  :client_secret => ENV["GCAL_CLIENT_SECRET"],
                  :summary => output_cal_name,
@@ -179,6 +188,7 @@ def setup_new_calendar(input_cal)
                )
   
   #prompt_for_refresh_token(output_cal)
+
   puts "Calendar created: " + output_cal_name
   input_cal.fetched_events.each do |input_event|
     output_cal.create_event do |output_event|
@@ -188,9 +198,6 @@ def setup_new_calendar(input_cal)
     end    
   end
 
-  class << output_cal
-    attr_accessor :fetched_events
-  end
   output_cal.fetched_events = input_cal.fetched_events
   return output_cal
 end
@@ -208,18 +215,15 @@ specials.each do |special|
     class_cals.each do |class_cal_json|
       cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
       #cal_class_output = setup_new_calendar(cal_class_input)
+      cal_class_input.pretty_print()
       find_empty_slot_with_no_conflict(
           special,
           cal_class_input, 
           cal_specialist_input
       )
-      puts "Class schedule:"
       
-      #TODO: Loop through events for prettier format:
-      puts cal_class_input.fetched_events
-      #cal_class_input.fetched_events.each do |event|
-      #  puts event
-      #end
+      cal_class_input.fetched_events = cal_class_input.fetched_events.sort! {|x, y| x.start_time <=> y.start_time}
+      cal_class_input.pretty_print()
     end
   end
 end
