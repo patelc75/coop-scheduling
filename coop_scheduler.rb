@@ -18,9 +18,9 @@ class CoopCalendar < Google::Calendar
   attr_accessor :fetched_events
 
   def pretty_print
-    puts summary
+    puts "\n" + summary + " Calendar"
     fetched_events.each do |event|
-      print Chronic.parse(event.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%H:%M%p %Z") + " " + event.title
+      print Chronic.parse(event.start_time).getlocal.strftime("%a %H:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%H:%M%p %Z") + " " + event.title
         puts 
     end
   end
@@ -75,7 +75,7 @@ def look_for_conflict(event_to_check, cal)
   cal.fetched_events.each do |event|
     event_start_time = Chronic.parse event.start_time
     event_end_time = Chronic.parse event.end_time
-    if ((event_to_check_start_time >= event_start_time && event_to_check_start_time < event_end_time) || (event_to_check_end_time > event_start_time && event_to_check_end_time <= event_end_time))
+    if ((event_to_check_start_time >= event_start_time && event_to_check_start_time <= event_end_time) || (event_to_check_end_time >= event_start_time && event_to_check_end_time <= event_end_time))
       return true
     end
   end
@@ -83,8 +83,8 @@ def look_for_conflict(event_to_check, cal)
   return false
 end
 
-def store_special_in_cal_events(special_to_schedule, special_title, class_cal, specialist_cal)
-  puts "\n" + special_title + " SCHEDULED for " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
+def store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
+  puts "\n" + special_to_schedule.title + " SCHEDULED for " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
 
   #All the fetched events from GCal API had status="confirmed", but allowed to write to it
   #special_to_schedule.status = "confirmed" 
@@ -120,7 +120,7 @@ def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
   return special_to_schedule
 end
 
-def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_input)
+def define_starting_slot(special)
   special_title = special["title"]+ " #" + 1.to_s
   special_duration = special["duration_in_mins"].to_i
 
@@ -128,26 +128,37 @@ def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_in
   special_to_schedule.title = special_title
   special_to_schedule.start_time = $monday_start
   special_to_schedule.end_time = $monday_start + special_duration*60 #add 30 mins
+
+  puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
+  print "Trying "
+
+  return special_to_schedule, special_duration
+end
+
+def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_input)
+  special_to_schedule, special_duration = define_starting_slot(special)
+
   specialist_conflict = class_conflict = true
 
-    puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
-    print "Now, trying "
   while(Chronic.parse(special_to_schedule.end_time) < $friday_end)    
     print Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%H:%M%p %Z") + ", "      
-    class_conflict = look_for_conflict(special_to_schedule, class_cal_input)  
+    class_conflict = look_for_conflict(special_to_schedule, class_cal_input)
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input)
       if specialist_conflict == false
-        store_special_in_cal_events(special_to_schedule, special_title, class_cal_input, specialist_cal_input)
+        store_special_in_cal_events(special_to_schedule, class_cal_input, specialist_cal_input)
         break        
       end
     end 
 
-    new_start_time = Chronic.parse(special_to_schedule.start_time) + 5*60 #5 minute padding
-    new_end_time = Chronic.parse(special_to_schedule.start_time) + special_duration+5*60
+    #Increment every 5 minutes
+    new_start_time = Chronic.parse(special_to_schedule.start_time) + 5*60 
+    new_end_time = Chronic.parse(special_to_schedule.start_time) + (special_duration+5)*60
+    #debugger if new_start_time.getlocal.strftime("%H:%M%p") == "09:45AM"
+
     if new_end_time.getlocal.hour <= $daily_ending_hour #4pm
-      special_to_schedule.start_time = Chronic.parse(special_to_schedule.start_time) + 5*60
-      special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
+      special_to_schedule.start_time = new_start_time
+      special_to_schedule.end_time = new_end_time
     else
       special_to_schedule = get_new_start_time_for_next_day(new_start_time)
     end
@@ -216,6 +227,7 @@ specials.each do |special|
       cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
       #cal_class_output = setup_new_calendar(cal_class_input)
       cal_class_input.pretty_print()
+      cal_specialist_input.pretty_print()
       find_empty_slot_with_no_conflict(
           special,
           cal_class_input, 
