@@ -228,7 +228,7 @@ specials.each do |special|
           cal_specialist_input
       )
 
-      store_special_in_cal_events(special_to_schedule, class_cal_input, specialist_cal_input)
+      store_special_in_cal_events(special_to_schedule, cal_class_input, cal_specialist_input)
       
       cal_class_input.fetched_events = cal_class_input.fetched_events.sort! {|x, y| x.start_time <=> y.start_time}
       cal_class_input.pretty_print()
