@@ -136,8 +136,7 @@ def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_in
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input)
       if specialist_conflict == false
-        store_special_in_cal_events(special_to_schedule, class_cal_input, specialist_cal_input)
-        break        
+        return special_to_schedule
       end
     end 
 
@@ -223,11 +222,13 @@ specials.each do |special|
       #cal_class_output = setup_new_calendar(cal_class_input)
       cal_class_input.pretty_print()
       cal_specialist_input.pretty_print()
-      find_empty_slot_with_no_conflict(
+      special_to_schedule = find_empty_slot_with_no_conflict(
           special,
           cal_class_input, 
           cal_specialist_input
       )
+
+      store_special_in_cal_events(special_to_schedule, class_cal_input, specialist_cal_input)
       
       cal_class_input.fetched_events = cal_class_input.fetched_events.sort! {|x, y| x.start_time <=> y.start_time}
       cal_class_input.pretty_print()
