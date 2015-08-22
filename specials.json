@@ -6,7 +6,8 @@
         "num_per_week": "5",
         "num_of_groups": "2",
         "duration_in_mins": "30 mins",
-        "google_calendar_id": "thecoopschool.org_i28t6js6u9mc8i2c62t48g18eg@group.calendar.google.com"
+        "google_calendar_id": "thecoopschool.org_i28t6js6u9mc8i2c62t48g18eg@group.calendar.google.com",
+        "classes": ["bumblebees", "dragonflies", "etc"]
     },
     {
         "title": "movement",

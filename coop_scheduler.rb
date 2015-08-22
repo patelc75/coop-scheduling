@@ -1,4 +1,4 @@
-#
+
 # Uncomment the LOAD_PATH lines if you want to run against the
 # local version of the gem.
 #
@@ -13,6 +13,7 @@ require 'google_calendar'
 require 'chronic'
 require 'time_difference'
 
+$cached_calendars = {} #all calenders that are fetched from google calendars
 
 class CoopCalendar < Google::Calendar
   attr_accessor :fetched_events
@@ -156,6 +157,10 @@ end
 
 
 def fetch_existing_calendar(calendar_id)
+  if !$cached_calendars[calendar_id].nil?
+    return $cached_calendars[calendar_id]
+  end
+
   if (calendar_id)
     cal = CoopCalendar.new(
              :client_id     => ENV["GCAL_CLIENT_ID"],
@@ -171,6 +176,7 @@ def fetch_existing_calendar(calendar_id)
 
     events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
     cal.fetched_events = events
+    $cached_calendars[calendar_id] = cal
     return cal
   else
     return nil
