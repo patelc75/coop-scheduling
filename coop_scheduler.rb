@@ -15,6 +15,8 @@ require 'time_difference'
 
 
 def read_char
+  puts 
+  puts "Press any key to continue"
   begin
     # save previous state of stty
     old_state = `stty -g`
@@ -48,6 +50,8 @@ class CoopCalendar < Google::Calendar
   attr_accessor :fetched_events
 
   def pretty_print
+    self.fetched_events = self.fetched_events.sort! {|x, y| x.start_time <=> y.start_time}
+
     puts "\n" + summary + " Calendar"
     fetched_events.each do |event|
       print Chronic.parse(event.start_time).getlocal.strftime("%a %H:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%H:%M%p %Z") + " " + event.title
@@ -136,8 +140,8 @@ def set_start_time_for_next_day(special_to_schedule, start_time, new_time_of_day
   new_special_to_schedule.start_time = new_start_time
   new_special_to_schedule.end_time = new_start_time + special_duration*60
 
-  puts 
-  puts "Trying " + new_start_time.strftime("%A")
+  #puts 
+  #puts "Trying " + new_start_time.strftime("%A")
   return new_special_to_schedule
 end
 
@@ -163,7 +167,7 @@ end
 
 
 def define_starting_slot(special)
-  special_title = special["title"]
+  special_title = "-----" + special["title"].upcase + "-----"
   special_duration = special["duration_in_mins"].to_i
 
   special_to_schedule = Google::Event.new
@@ -172,7 +176,7 @@ def define_starting_slot(special)
   special_to_schedule.end_time = $monday_start + special_duration*60 #add 30 mins
 
   puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
-  print "Trying "
+  #print "Trying "
 
   return special_to_schedule, special_duration
 end
@@ -183,7 +187,7 @@ def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_in
   specialist_conflict = class_conflict = true
 
   while(Chronic.parse(special_to_schedule.end_time) < $friday_end)    
-    print Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%H:%M%p %Z") + ", "      
+    #print Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%H:%M%p %Z") + ", "      
     class_conflict = look_for_conflict(special_to_schedule, class_cal_input)
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input)
@@ -224,8 +228,8 @@ def fetch_existing_calendar(calendar_id)
     #prompt_for_refresh_token(cal)
 
     cal.login_with_refresh_token(ENV["GCAL_REFRESH_TOKEN"])
-
-    events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true)
+    #debugger
+    events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true, :max_results => 100)
     cal.fetched_events = events
     $cached_calendars[calendar_id] = cal
     return cal
@@ -274,11 +278,10 @@ class_cals = JSON.parse(cal_file)
 
 specials.each do |special|
   cal_specialist_input = fetch_existing_calendar(special["google_calendar_id"])
-
   if !cal_specialist_input.nil?
     applicable_classes = get_classes_that_apply_to_special(special, class_cals)
     applicable_classes.each do |class_cal_json|
-      cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
+      cal_class_input = fetch_existing_calendar(class_cal_json["google_calendar_id"])
       cal_class_input.pretty_print()
       cal_specialist_input.pretty_print()
 
@@ -294,8 +297,6 @@ specials.each do |special|
       if num_per_week > 1
         schedule_remaining_specials_for_week(num_per_week, special_to_schedule, cal_class_input, cal_specialist_input, special)
       end
-
-      cal_class_input.fetched_events = cal_class_input.fetched_events.sort! {|x, y| x.start_time <=> y.start_time}
 
       cal_class_input.pretty_print()
     end
