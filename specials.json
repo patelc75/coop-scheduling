@@ -3,8 +3,51 @@
         "title": "spanish",
         "num_per_week": "5",
         "duration_in_mins": "30 mins",
-        "num_of_groups": "2",
         "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
-        "classes": ["Kindergarten", "First Grade", "Second Grade", "Third Grade"]
-    }
+        "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
+    },
+    {
+        "title": "art/woodshop",
+        "num_per_week": "1",
+        "duration_in_mins": "45 mins",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
+    },    
+    {
+        "title": "art",
+        "num_per_week": "1",
+        "duration_in_mins": "30 mins",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["Dragonflies", "Bumblebees"]
+    },
+    {
+        "title": "woodshop",
+        "num_per_week": "1",
+        "duration_in_mins": "30 mins",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["Dragonflies", "Bumblebees", "Butterflies"]
+    },
+    {
+        "title": "science/gardening",
+        "num_per_week": "1",
+        "duration_in_mins": "30 mins",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["Dragonflies", "Butterflies"]
+    },
+    {
+        "title": "science/gardening",
+        "num_per_week": "1",
+        "duration_in_mins": "45 mins",
+        "google_calendar_id1": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", /*nicole*/
+        "google_calendar_id2": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", /*sophie*/
+        "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
+    } ,
+    {
+        "title": "science/woodshop",
+        "num_per_week": "1",
+        "duration_in_mins": "60 mins",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["Bumblebees"]
+    },    
 ]
