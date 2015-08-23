@@ -27,7 +27,7 @@ class CoopCalendar < Google::Calendar
   end
 end
 
-$monday_start = Chronic.parse "monday june 22 8am" #=> 2015-06-08 09:00:00 -0400
+$monday_start = Chronic.parse "monday aug 24 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
 $daily_ending_hour = 16
@@ -89,7 +89,6 @@ def store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
 
   #All the fetched events from GCal API had status="confirmed", but allowed to write to it
   #special_to_schedule.status = "confirmed" 
-
   class_cal.fetched_events << special_to_schedule
   specialist_cal.fetched_events << special_to_schedule
 
@@ -98,20 +97,43 @@ def store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
 
 end
 
-def get_new_start_time_for_next_day(new_start_time, special_to_schedule)
-  new_start_time = new_start_time + 24*60*60 #jump to the next day
-  date_only_no_time = new_start_time.getlocal.strftime("%Y-%m-%d")
-  new_start_time = Chronic.parse "#{date_only_no_time} 8am" 
-  special_to_schedule.start_time = new_start_time
-  special_to_schedule.end_time = Chronic.parse(special_to_schedule.start_time) + special_duration*60
+def set_start_time_for_next_day(special_to_schedule, start_time, new_time_of_day, special_duration)
+  new_start_time = start_time + 24*60*60 #jump to the next day
+  new_start_time_date_only = new_start_time.getlocal.strftime("%Y-%m-%d")
+  new_start_time = Chronic.parse("#{new_start_time_date_only} " + new_time_of_day)
+
+  new_special_to_schedule = special_to_schedule
+  new_special_to_schedule.start_time = new_start_time
+  new_special_to_schedule.end_time = new_start_time + special_duration*60
 
   puts 
   puts "Trying " + new_start_time.strftime("%A")
-  return special_to_schedule
+  return new_special_to_schedule
 end
 
+def schedule_remaining_specials_for_week(num_per_week, special_to_schedule, class_cal, specialist_cal, special)
+  special_duration = special["duration_in_mins"].to_i
+
+  while (num_per_week > 1)
+    next_special = special_to_schedule.dup
+      set_start_time_for_next_day(
+        special_to_schedule,
+        Chronic.parse(next_special.start_time), 
+        Chronic.parse(next_special.start_time).getlocal.strftime("%H:%M%p").to_s,
+        special_duration
+      ) # last param is "09:45AM"
+
+    store_special_in_cal_events(next_special, class_cal, specialist_cal)
+
+    num_per_week -= 1
+    #debugger if new_start_time.getlocal.strftime("%H:%M%p") == "09:45AM"
+  end
+end
+
+
+
 def define_starting_slot(special)
-  special_title = special["title"]+ " #" + 1.to_s
+  special_title = special["title"]
   special_duration = special["duration_in_mins"].to_i
 
   special_to_schedule = Google::Event.new
@@ -149,7 +171,7 @@ def find_empty_slot_with_no_conflict(special, class_cal_input, specialist_cal_in
       special_to_schedule.start_time = new_start_time
       special_to_schedule.end_time = new_end_time
     else
-      special_to_schedule = get_new_start_time_for_next_day(new_start_time)
+      special_to_schedule = set_start_time_for_next_day(special_to_schedule, new_start_time, "8am", special_duration)
     end
   end
 end
@@ -222,15 +244,22 @@ specials.each do |special|
       #cal_class_output = setup_new_calendar(cal_class_input)
       cal_class_input.pretty_print()
       cal_specialist_input.pretty_print()
+
       special_to_schedule = find_empty_slot_with_no_conflict(
           special,
           cal_class_input, 
           cal_specialist_input
       )
-
-      store_special_in_cal_events(special_to_schedule, cal_class_input, cal_specialist_input)
       
+      store_special_in_cal_events(special_to_schedule, cal_class_input, cal_specialist_input)
+
+      num_per_week = special["num_per_week"].to_i
+      if num_per_week > 1
+        schedule_remaining_specials_for_week(num_per_week, special_to_schedule, cal_class_input, cal_specialist_input, special)
+      end
+
       cal_class_input.fetched_events = cal_class_input.fetched_events.sort! {|x, y| x.start_time <=> y.start_time}
+
       cal_class_input.pretty_print()
     end
   end
