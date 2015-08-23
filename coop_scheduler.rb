@@ -263,10 +263,10 @@ def create_new_cal_and_write_to_gcal_api(input_cal)
   return output_cal
 end
 
-def get_classes_that_apply_to_special(special, class_cals)
+def get_classes_mapped_to_special(special, class_cals)
   filtered_classes = []
   special["classes"].each do |special_class| 
-    filtered_classes += class_cals.select { |cal|  cal["class_type"] == special_class }
+    filtered_classes += class_cals.select { |cal|  cal["name"] == special_class }
   end
   return filtered_classes
 end  
@@ -277,9 +277,11 @@ specials = JSON.parse(specials_file)
 class_cals = JSON.parse(cal_file)
 
 specials.each do |special|
-  cal_specialist_input = fetch_existing_calendar(special["google_calendar_id"])
+  cal_specialist_input = fetch_existing_calendar(special["teacher1_google_calendar_id"])
+
   if !cal_specialist_input.nil?
-    applicable_classes = get_classes_that_apply_to_special(special, class_cals)
+    applicable_classes = get_classes_mapped_to_special(special, class_cals)
+    debugger
     applicable_classes.each do |class_cal_json|
       cal_class_input = fetch_existing_calendar(class_cal_json["google_calendar_id"])
       cal_class_input.pretty_print()
