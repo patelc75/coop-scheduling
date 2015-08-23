@@ -13,6 +13,35 @@ require 'google_calendar'
 require 'chronic'
 require 'time_difference'
 
+
+def read_char
+  begin
+    # save previous state of stty
+    old_state = `stty -g`
+    # disable echoing and enable raw (not having to press enter)
+    system "stty raw -echo"
+    c = STDIN.getc.chr
+    # gather next two characters of special keys
+    if(c=="\e")
+      extra_thread = Thread.new{
+        c = c + STDIN.getc.chr
+        c = c + STDIN.getc.chr
+      }
+      # wait just long enough for special keys to get swallowed
+      extra_thread.join(0.00001)
+      # kill thread so not-so-long special keys don't wait on getc
+      extra_thread.kill
+    end
+  rescue => ex
+    puts "#{ex.class}: #{ex.message}"
+    puts ex.backtrace
+  ensure
+    # restore previous state of stty
+    system "stty #{old_state}"
+  end
+  return c
+end
+
 $cached_calendars = {} #all calenders that are fetched from google calendars
 
 class CoopCalendar < Google::Calendar
@@ -24,6 +53,7 @@ class CoopCalendar < Google::Calendar
       print Chronic.parse(event.start_time).getlocal.strftime("%a %H:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%H:%M%p %Z") + " " + event.title
         puts 
     end
+    read_char()
   end
 end
 
@@ -229,6 +259,14 @@ def create_new_cal_and_write_to_gcal_api(input_cal)
   return output_cal
 end
 
+def get_classes_that_apply_to_special(special, class_cals)
+  filtered_classes = []
+  special["classes"].each do |special_class| 
+    filtered_classes += class_cals.select { |cal|  cal["class_type"] == special_class }
+  end
+  return filtered_classes
+end  
+
 specials_file = File.read('specials.json')
 cal_file = File.read('classes.json')
 specials = JSON.parse(specials_file)
@@ -238,10 +276,9 @@ specials.each do |special|
   cal_specialist_input = fetch_existing_calendar(special["google_calendar_id"])
 
   if !cal_specialist_input.nil?
-    #cal_specialist_output = setup_new_calendar(cal_specialist_input)
-    class_cals.each do |class_cal_json|
+    applicable_classes = get_classes_that_apply_to_special(special, class_cals)
+    applicable_classes.each do |class_cal_json|
       cal_class_input = fetch_existing_calendar(class_cal_json["class_calendar_id"])
-      #cal_class_output = setup_new_calendar(cal_class_input)
       cal_class_input.pretty_print()
       cal_specialist_input.pretty_print()
 

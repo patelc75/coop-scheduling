@@ -1,61 +1,10 @@
 [
     {
         "title": "spanish",
-        "specialist": "carla",
-        "room": "library, music",
         "num_per_week": "5",
-        "num_of_groups": "2",
         "duration_in_mins": "30 mins",
-        "google_calendar_id": "thecoopschool.org_i28t6js6u9mc8i2c62t48g18eg@group.calendar.google.com",
-        "classes": ["bumblebees", "dragonflies", "etc"]
-    },
-    {
-        "title": "movement",
-        "specialist": "tbd",
-        "room": "rec_room",
-        "num_per_week": "1",
-        "num_of_groups": "1"        
-    },
-    {
-        "title": "art",
-        "specialist": "tbd",
-        "room": "art_room",
-        "num_per_week": "1",
-        "num_of_groups": "1"  
-    },
-    {
-        "title": "gardening",
-        "specialist": "sophie",
-        "room": "roof, science_room",
-        "num_per_week": "1",
-        "num_of_groups": "1"        
-    },
-    {
-        "title": "wood_shop",
-        "specialist": "rotem",
-        "room": "wood_shop_room",
-        "num_per_week": "1",
-        "num_of_groups": "2"  
-    },
-    {
-        "title": "music",
-        "specialist": "dan",
-        "room": "music_room",
-        "num_per_week": "1",
-        "num_of_groups": "1_or_2" //see Specialists - schedule preferences 2015-2016
-    },
-    {
-        "title": "library",
-        "specialist": "ingrid",
-        "room": "library",
-        "num_per_week": "1",
-        "num_of_groups": "1" 
-    }, 
-    {
-        "title": "science",
-        "specialist": "nicole",
-        "room": "science_lab",
-        "num_per_week": "1",
-        "num_of_groups": "1_or_2"        
+        "num_of_groups": "2",
+        "google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["Kindergarten", "First Grade", "Second Grade", "Third Grade"]
     }
 ]
