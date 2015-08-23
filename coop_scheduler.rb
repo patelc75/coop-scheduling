@@ -64,7 +64,7 @@ end
 $monday_start = Chronic.parse "monday aug 24 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
-$daily_ending_hour = 16
+$daily_ending_time = "3:30pm"
 
 def prompt_for_refresh_token(cal)
   puts "Do you already have a refresh token? (y/n)"
@@ -211,7 +211,7 @@ def find_empty_slot_with_no_conflict(special_to_schedule, special_duration, clas
     new_end_time = Chronic.parse(special_to_schedule.start_time) + (special_duration+5)*60
     #debugger if new_start_time.getlocal.strftime("%H:%M%p") == "09:45AM"
 
-    if new_end_time.getlocal.hour <= $daily_ending_hour #4pm
+    if new_end_time < Chronic.parse(new_start_time.getlocal.strftime("%Y-%m-%d ") + $daily_ending_time)
       special_to_schedule.start_time = new_start_time
       special_to_schedule.end_time = new_end_time
     else
