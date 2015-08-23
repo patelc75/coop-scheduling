@@ -38,8 +38,8 @@
         "title": "science/gardening",
         "num_per_week": "1",
         "duration_in_mins": "45 mins",
-        "google_calendar_id1": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", /*nicole*/
-        "google_calendar_id2": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", /*sophie*/
+        "google_calendar_id1": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", 
+        "google_calendar_id2": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", 
         "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
     } ,
     {
