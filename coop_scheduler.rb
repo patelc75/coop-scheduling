@@ -14,7 +14,7 @@ require 'chronic'
 require 'time_difference'
 
 
-def read_char
+def pause_for_keystroke
   puts 
   puts "Press any key to continue"
   begin
@@ -54,10 +54,10 @@ class CoopCalendar < Google::Calendar
 
     puts "\n" + summary + " Calendar"
     fetched_events.each do |event|
-      print Chronic.parse(event.start_time).getlocal.strftime("%a %I:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%I:%M%p %Z") + " " + event.title
+      print Chronic.parse(event.start_time).getlocal.strftime("%a %I:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%I:%M%p %Z") + " " + (event.title || 'untitled event')
         puts 
     end
-    read_char()
+    #pause_for_keystroke()
   end
 end
 
