@@ -11,7 +11,7 @@
         "num_per_week": "1",
         "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ovqtmb197310b93vuhfpqmsuds@group.calendar.google.com",
-        "teacher2_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
     },    
     {
@@ -33,7 +33,7 @@
         "num_per_week": "1",
         "duration_in_mins": "30 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com",
-        "teacher2_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",        
+        "teacher2_google_calendar_id": "thecoopschool.org_7v588to9pt0tcl812jt61ms0ao@group.calendar.google.com",
         "classes": ["Dragonflies", "Butterflies"]
     },
     {
@@ -41,7 +41,7 @@
         "num_per_week": "1",
         "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com", 
-        "teacher2_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com", 
+        "teacher2_google_calendar_id": "thecoopschool.org_7v588to9pt0tcl812jt61ms0ao@group.calendar.google.com",
         "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
     } ,
     {
@@ -49,7 +49,7 @@
         "num_per_week": "1",
         "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com",
-        "teacher2_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes": ["Bumblebees"]
     }
 ]
