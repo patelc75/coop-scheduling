@@ -61,6 +61,12 @@ class CoopCalendar < Google::Calendar
   end
 end
 
+def print_cached_calendars
+  $cached_calendars.each do |key, cal|
+    cal.pretty_print
+  end
+end
+
 $monday_start = Chronic.parse "monday aug 24 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
@@ -160,8 +166,6 @@ def schedule_specials_for_week(class_cal, specialist_cal, special)
     )
 
     store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
-    class_cal.pretty_print()
-    specialist_cal.pretty_print()
 
     special_to_schedule = special_to_schedule.dup
 
@@ -292,10 +296,11 @@ specials.each do |special|
     applicable_classes = get_classes_mapped_to_special(special, class_cals)
     applicable_classes.each do |class_cal_json|
       cal_class_input = fetch_existing_calendar(class_cal_json["google_calendar_id"])
-
       schedule_specials_for_week(cal_class_input, cal_specialist_input, special)
     end
   end
 end
+
+print_cached_calendars()
 
 
