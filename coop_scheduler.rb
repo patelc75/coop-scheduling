@@ -189,10 +189,9 @@ def define_starting_slot(special, starting_slot, class_cal)
   special_to_schedule = Google::Event.new
   special_to_schedule.title = special_title
   special_to_schedule.start_time = starting_slot
-  special_to_schedule.end_time = starting_slot + special_duration*60 #add 30 mins
+  special_to_schedule.end_time = starting_slot + special_duration*60 
 
   puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
-  #print "Trying "
 
   return special_to_schedule, special_duration
 end
