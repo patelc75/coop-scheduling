@@ -109,14 +109,13 @@ def print_event_info (cal, events, start_date, end_date)
 end
 
 def look_for_conflict(event_to_check, cal)
-
   event_to_check_start_time = Chronic.parse event_to_check.start_time
   event_to_check_end_time = Chronic.parse event_to_check.end_time
 #e event_to_check_start_time.getlocal.to_s + " to " + event_to_check_end_time.getlocal.to_s
   cal.fetched_events.each do |event|
     event_start_time = Chronic.parse event.start_time
     event_end_time = Chronic.parse event.end_time
-    if ((event_to_check_start_time >= event_start_time && event_to_check_start_time <= event_end_time) || (event_to_check_end_time >= event_start_time && event_to_check_end_time <= event_end_time))
+    if ((event_to_check_start_time >= event_start_time && event_to_check_start_time < event_end_time) || (event_to_check_end_time > event_start_time && event_to_check_end_time <= event_end_time))
       return true
     end
   end
@@ -158,23 +157,33 @@ def schedule_specials_for_week(class_cal, specialist_cal, special)
   special_to_schedule, special_duration = define_starting_slot(special, $monday_start, class_cal)
 
   while (num_per_week >= 1)    
-    special_to_schedule = find_empty_slot_with_no_conflict(
-        special_to_schedule,
-        special_duration,
-        class_cal, 
-        specialist_cal
-    )
+    if(!special_to_schedule.nil?)  
+      special_to_schedule = find_empty_slot_with_no_conflict(
+          special_to_schedule,
+          special_duration,
+          class_cal, 
+          specialist_cal
+      )
 
-    store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
+      if(!special_to_schedule.nil?)
+        store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
 
-    special_to_schedule = special_to_schedule.dup
+        special_to_schedule = special_to_schedule.dup
 
-    set_start_time_for_next_day(
-      special_to_schedule,
-      Chronic.parse(special_to_schedule.start_time), 
-      "8am",
-      special_duration
-    ) # last param is "09:45AM"
+        set_start_time_for_next_day(
+          special_to_schedule,
+          Chronic.parse(special_to_schedule.start_time), 
+          "8am",
+          special_duration
+        ) # last param is "09:45AM"
+      else
+        puts "========Could not schedule========"
+
+      end
+    else
+      puts "========Could not schedule========"
+    end
+
     num_per_week -= 1
     #debugger if new_start_time.getlocal.strftime("%H:%M%p") == "09:45AM"
   end
