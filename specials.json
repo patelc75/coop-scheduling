@@ -2,22 +2,30 @@
     {
         "title": "spanish",
         "num_per_week": "5",
-        "duration_in_mins": "30 mins",
+        "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
         "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
     },
     {
         "title": "art/woodshop",
         "num_per_week": "1",
-        "duration_in_mins": "30 mins",
+        "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ovqtmb197310b93vuhfpqmsuds@group.calendar.google.com",
         "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
-        "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders", "Dragonflies", "Bumblebees"]
-    },    
+        "classes": ["Dragonflies", "Bumblebees"]
+    },  
+    {
+        "title": "art/woodshop",
+        "num_per_week": "1",
+        "duration_in_mins": "45 mins",
+        "teacher1_google_calendar_id": "thecoopschool.org_ovqtmb197310b93vuhfpqmsuds@group.calendar.google.com",
+        "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
+        "classes": ["Sharks", "Third Graders"]
+    },       
     {
         "title": "science/gardening",
         "num_per_week": "1",
-        "duration_in_mins": "30 mins",
+        "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com",
         "teacher2_google_calendar_id": "thecoopschool.org_7v588to9pt0tcl812jt61ms0ao@group.calendar.google.com",
         "classes": ["Dragonflies", "Bumblebees"]
@@ -29,7 +37,7 @@
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com", 
         "teacher2_google_calendar_id": "thecoopschool.org_7v588to9pt0tcl812jt61ms0ao@group.calendar.google.com",
         "classes": ["Katydids", "Centipedes", "Sharks", "Third Graders"]
-    } ,
+    },
     {
         "title": "science/woodshop",
         "num_per_week": "1",
@@ -55,7 +63,7 @@
     {
         "title": "music",
         "num_per_week": "1",
-        "duration_in_mins": "30 mins",
+        "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_f6bkpnu519a6n5fvk4g2ud7l4k@group.calendar.google.com",
         "classes": ["Dragonflies", "Bumblebees"]
     },
@@ -65,7 +73,15 @@
         "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_js3jm91g13bm9e0lnttlromg8o@group.calendar.google.com",
         "classes": ["Dragonflies", "Bumblebees", "Katydids", "Centipedes", "Sharks", "Third Graders"]
-    } 
+    }, 
+    {
+        "title": "art/woodshop",
+        "num_per_week": "1",
+        "duration_in_mins": "45 mins",
+        "teacher1_google_calendar_id": "thecoopschool.org_ovqtmb197310b93vuhfpqmsuds@group.calendar.google.com",
+        "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
+        "classes": ["Sharks", "Third Graders"]
+    }     
 ]
 
 
