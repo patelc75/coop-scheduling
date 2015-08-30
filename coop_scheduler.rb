@@ -12,7 +12,7 @@ require 'json'
 require 'google_calendar'
 require 'chronic'
 require 'time_difference'
-
+require 'ruby-prof'
 
 def pause_for_keystroke
   puts 
@@ -54,7 +54,7 @@ class CoopCalendar < Google::Calendar
 
     puts "\n" + summary + " Calendar"
     fetched_events.each do |event|
-      print Chronic.parse(event.start_time).getlocal.strftime("%a %I:%M%p") + "-" + Chronic.parse(event.end_time).getlocal.strftime("%I:%M%p %Z") + " " + (event.title || 'untitled event')
+      print event.start_time_object.getlocal.strftime("%a %I:%M%p") + "-" + event.end_time_object.getlocal.strftime("%I:%M%p %Z") + " " + (event.title || 'untitled event')
         puts 
     end
     #pause_for_keystroke()
@@ -67,7 +67,7 @@ def print_cached_calendars
   end
 end
 
-$monday_start = Chronic.parse "monday aug 24 8am" #=> 2015-06-08 09:00:00 -0400
+$monday_start = Chronic.parse "monday aug 31 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
 $daily_ending_time = "3:30pm"
@@ -109,31 +109,32 @@ def print_event_info (cal, events, start_date, end_date)
 end
 
 def look_for_conflict(event_to_check, cal)
-  event_to_check_start_time = Chronic.parse event_to_check.start_time
-  event_to_check_end_time = Chronic.parse event_to_check.end_time
-#e event_to_check_start_time.getlocal.to_s + " to " + event_to_check_end_time.getlocal.to_s
+
+  return false if cal.nil?
+  #e event_to_check_start_time.getlocal.to_s + " to " + event_to_check_end_time.getlocal.to_s
   cal.fetched_events.each do |event|
-    event_start_time = Chronic.parse event.start_time
-    event_end_time = Chronic.parse event.end_time
-    if ((event_to_check_start_time >= event_start_time && event_to_check_start_time < event_end_time) || (event_to_check_end_time > event_start_time && event_to_check_end_time <= event_end_time))
+    if ((event_to_check.start_time_object >= event.start_time_object && event_to_check.start_time_object < event.end_time_object) || (event_to_check.end_time_object > event.start_time_object && event_to_check.end_time_object <= event.end_time_object))
       return true
     end
   end
-  
   return false
 end
 
-def store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
-  puts "\n" + special_to_schedule.title + " SCHEDULED for " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + " to " + Chronic.parse(special_to_schedule.end_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
+def store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal1, specialist_cal2)
+  puts "\n" + special_to_schedule.title + 
+    " SCHEDULED for " + 
+    special_to_schedule.start_time_object.getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + 
+    " to " + 
+    special_to_schedule.end_time_object.getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
 
   #All the fetched events from GCal API had status="confirmed", but allowed to write to it
   #special_to_schedule.status = "confirmed" 
   class_cal.fetched_events << special_to_schedule
-  specialist_cal.fetched_events << special_to_schedule
+  specialist_cal1.fetched_events << special_to_schedule
+  specialist_cal2.fetched_events << special_to_schedule if specialist_cal2
 
   #TODO ISSUE #2 If more than one per week, create the rest at the same time for the rest of the week
   #num_per_week = special["num_per_week"].to_i
-
 end
 
 def set_start_time_for_next_day(special_to_schedule, start_time, new_time_of_day, special_duration)
@@ -142,15 +143,16 @@ def set_start_time_for_next_day(special_to_schedule, start_time, new_time_of_day
   new_start_time = Chronic.parse("#{new_start_time_date_only} " + new_time_of_day)
 
   new_special_to_schedule = special_to_schedule
-  new_special_to_schedule.start_time = new_start_time
-  new_special_to_schedule.end_time = new_start_time + special_duration*60
-
+  new_special_to_schedule.start_time_object = new_start_time
+  new_special_to_schedule.start_time = new_special_to_schedule.start_time_object
+  new_special_to_schedule.end_time_object = new_start_time + special_duration*60
+  new_special_to_schedule.end_time = new_special_to_schedule.end_time_object
   #puts 
   #puts "Trying " + new_start_time.strftime("%A")
   return new_special_to_schedule
 end
 
-def schedule_specials_for_week(class_cal, specialist_cal, special)
+def schedule_specials_for_week(class_cal, specialist_cal1, specialist_cal2, special)
   special_duration = special["duration_in_mins"].to_i
   num_per_week = special["num_per_week"].to_i
 
@@ -162,17 +164,25 @@ def schedule_specials_for_week(class_cal, specialist_cal, special)
           special_to_schedule,
           special_duration,
           class_cal, 
-          specialist_cal
+          specialist_cal1,
+          specialist_cal2
       )
 
+      
       if(!special_to_schedule.nil?)
-        store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal)
+        store_special_in_cal_events(special_to_schedule, class_cal, specialist_cal1, specialist_cal2)
 
+        break if num_per_week == 1
         special_to_schedule = special_to_schedule.dup
-
+        class << special_to_schedule
+          attr_accessor :start_time_object
+          attr_accessor :end_time_object
+        end
+        special_to_schedule.start_time_object = Chronic.parse special_to_schedule.start_time
+        special_to_schedule.end_time_object = Chronic.parse special_to_schedule.end_time
         set_start_time_for_next_day(
           special_to_schedule,
-          Chronic.parse(special_to_schedule.start_time), 
+          special_to_schedule.start_time_object, 
           "8am",
           special_duration
         ) # last param is "09:45AM"
@@ -196,40 +206,53 @@ def define_starting_slot(special, starting_slot, class_cal)
   special_duration = special["duration_in_mins"].to_i
 
   special_to_schedule = Google::Event.new
-  special_to_schedule.title = special_title
-  special_to_schedule.start_time = starting_slot
-  special_to_schedule.end_time = starting_slot + special_duration*60 
 
-  puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
+  class << special_to_schedule
+    attr_accessor :start_time_object
+    attr_accessor :end_time_object
+  end
+
+  special_to_schedule.title = special_title
+  special_to_schedule.start_time_object = starting_slot
+  special_to_schedule.start_time = special_to_schedule.start_time_object
+  special_to_schedule.end_time_object = starting_slot + special_duration*60 
+  special_to_schedule.end_time = special_to_schedule.end_time_object
+
+  puts "\n" + "Searching for a " + special["duration_in_mins"] + " slot for " + special_title + " starting with " + special_to_schedule.start_time_object.getlocal.strftime("%a %m-%d-%Y %H:%M%p %Z") + "\n"
 
   return special_to_schedule, special_duration
 end
 
-def find_empty_slot_with_no_conflict(special_to_schedule, special_duration, class_cal_input, specialist_cal_input)
+def find_empty_slot_with_no_conflict(special_to_schedule, special_duration, class_cal_input, specialist_cal_input1, specialist_cal_input2)
   specialist_conflict = class_conflict = true
 
-  while(Chronic.parse(special_to_schedule.end_time) < $friday_end)    
+  while(special_to_schedule.end_time_object < $friday_end)    
     #print Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%H:%M%p %Z") + ", "      
     class_conflict = look_for_conflict(special_to_schedule, class_cal_input)
     if class_conflict == false
-      specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input)
+      specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input1)
       if specialist_conflict == false
-        return special_to_schedule
+        specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input2)
+        if specialist_conflict == false
+          return special_to_schedule
+        end
       end
     end 
-
     #Increment every 5 minutes
-    new_start_time = Chronic.parse(special_to_schedule.start_time) + 5*60 
-    new_end_time = Chronic.parse(special_to_schedule.start_time) + (special_duration+5)*60
+    new_start_time = special_to_schedule.start_time_object + 5*60 
+    new_end_time = special_to_schedule.start_time_object + (special_duration+5)*60
     #debugger if new_start_time.getlocal.strftime("%H:%M%p") == "09:45AM"
 
     if new_end_time < Chronic.parse(new_start_time.getlocal.strftime("%Y-%m-%d ") + $daily_ending_time)
-      special_to_schedule.start_time = new_start_time
+      special_to_schedule.start_time_object = new_start_time
+      special_to_schedule.start_time = special_to_schedule.start_time_object
+      special_to_schedule.end_time_object = new_end_time
       special_to_schedule.end_time = new_end_time
     else
       special_to_schedule = set_start_time_for_next_day(special_to_schedule, new_start_time, "8am", special_duration)
     end
   end
+
 end
 
 
@@ -251,6 +274,15 @@ def fetch_existing_calendar(calendar_id)
 
     cal.login_with_refresh_token(ENV["GCAL_REFRESH_TOKEN"])
     events = cal.find_events_in_range($monday_start, $friday_end, :expand_recurring_events => true, :max_results => 100)
+    events.each do |event|
+      class << event
+        attr_accessor :start_time_object
+        attr_accessor :end_time_object
+      end
+     
+      event.start_time_object = Chronic.parse event.start_time
+      event.end_time_object = Chronic.parse event.end_time
+    end
     cal.fetched_events = events
     $cached_calendars[calendar_id] = cal
     return cal
@@ -298,13 +330,14 @@ specials = JSON.parse(specials_file)
 class_cals = JSON.parse(cal_file)
 
 specials.each do |special|
-  cal_specialist_input = fetch_existing_calendar(special["teacher1_google_calendar_id"])
-
-  if !cal_specialist_input.nil?
+  cal_specialist_input1 = fetch_existing_calendar(special["teacher1_google_calendar_id"])
+  cal_specialist_input2 = fetch_existing_calendar(special["teacher2_google_calendar_id"])
+  
+  if !cal_specialist_input1.nil?
     applicable_classes = get_classes_mapped_to_special(special, class_cals)
     applicable_classes.each do |class_cal_json|
       cal_class_input = fetch_existing_calendar(class_cal_json["google_calendar_id"])
-      schedule_specials_for_week(cal_class_input, cal_specialist_input, special)
+      schedule_specials_for_week(cal_class_input, cal_specialist_input1, cal_specialist_input2, special)
     end
   end
 end
