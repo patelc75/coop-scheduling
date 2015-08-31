@@ -12,7 +12,7 @@ require 'json'
 require 'google_calendar'
 require 'chronic'
 require 'time_difference'
-require 'ruby-prof'
+#require 'ruby-prof'
 
 def pause_for_keystroke
   puts 
@@ -62,9 +62,10 @@ class CoopCalendar < Google::Calendar
 end
 
 def print_cached_calendars
+  #$cached_calendars = $cached_calendars.sort_by { |k, v| v.summary }
   $cached_calendars.each do |key, cal|
     cal.pretty_print
-  end
+  end  
 end
 
 $monday_start = Chronic.parse "monday aug 31 8am" #=> 2015-06-08 09:00:00 -0400
