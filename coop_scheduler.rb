@@ -292,8 +292,14 @@ def fetch_existing_calendar(calendar_id)
   end
 end
 
+def write_cached_calendars_to_gcal
+  $cached_calendars.each do |key, cal|
+    create_new_cal_and_write_to_gcal_api(cal)
+  end  
+end
+
 def create_new_cal_and_write_to_gcal_api(input_cal) 
-  output_cal_name = input_cal.summary + " Filled"
+  output_cal_name = input_cal.summary.gsub("In", "Out")
   output_cal = CoopCalendar.create(
                  :client_id     => ENV["GCAL_CLIENT_ID"],
                  :client_secret => ENV["GCAL_CLIENT_SECRET"],
@@ -307,9 +313,13 @@ def create_new_cal_and_write_to_gcal_api(input_cal)
   puts "Calendar created: " + output_cal_name
   input_cal.fetched_events.each do |input_event|
     output_cal.create_event do |output_event|
+      #output_event = output_cal.create_event
+      debugger
       output_event.title = input_event.title
-      output_event.start_time = input_event.start_time
-      output_event.end_time = input_event.end_time
+      output_event.start_time = input_event.start_time_object
+      output_event.end_time = input_event.end_time_object
+      output_event.location = "Brevoort"
+      #output_event.save
     end    
   end
 
@@ -345,4 +355,5 @@ end
 
 print_cached_calendars()
 
+write_cached_calendars_to_gcal()
 
