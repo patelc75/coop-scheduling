@@ -314,11 +314,11 @@ def create_new_cal_and_write_to_gcal_api(input_cal)
   input_cal.fetched_events.each do |input_event|
     output_cal.create_event do |output_event|
       #output_event = output_cal.create_event
-      debugger
       output_event.title = input_event.title
       output_event.start_time = input_event.start_time_object
       output_event.end_time = input_event.end_time_object
-      output_event.location = "Brevoort"
+      output_event.location = "40 Brevoort Place, Brooklyn, NY 11216"
+      output_event.recurrence = {'freq' => 'weekly', 'byday' => 'mo,tu,we,th,fr'}
       #output_event.save
     end    
   end
