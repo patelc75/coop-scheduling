@@ -14,10 +14,11 @@ We are using this Ruby google calendar wrapper: https://github.com/northworld/go
 ## Usage
 
 1. Log into to Google Calendar (coopcalendars@thecoopschool.org). Get password from Mandy or Chirag
-1. Ask Chirag for the Google Cal auth env variables via LastPass. Update google cal token if necessary.
+1. Ask Chirag for the Google Cal auth env variables via LastPass. 
 1. Install gems below
 1. Confirm specials.json and classes.json are correct (split up specials in specials.json for better load balancing of classes)
-1. Run `rdebug coop_scheudler.rb`
+1. Run `rdebug coop_scheudler.rb` or `ruby coop_scheduler.rb`
+1. If `Google::HTTPAuthorizationFailed` error occurs, uncomment the `prompt_for_refresh_token(cal)` line in `ruby coop_scheduler.rb`
 1. In the output look for the "Could not Schedule" string for classes that could not be scheduled
 1. When finished, hide the "Class In" or "Special In" calendars in Google Cal account and look for the "Class Out" and "Special Out" alendars
 1. See Github issues for pending development still needed (recurring events not working for example)
