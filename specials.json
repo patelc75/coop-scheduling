@@ -1,5 +1,12 @@
 [
     {
+        "title": "movement",
+        "num_per_week": "1",
+        "duration_in_mins": "45 mins",
+        "teacher1_google_calendar_id": "thecoopschool.org_js3jm91g13bm9e0lnttlromg8o@group.calendar.google.com",
+        "classes": ["bumblebees", "fourth", "kindergarten"]
+    },
+    {
         "title": "science/woodshop",
         "num_per_week": "1",
         "duration_in_mins": "60 mins",
@@ -72,13 +79,6 @@
         "duration_in_mins": "45 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_f6bkpnu519a6n5fvk4g2ud7l4k@group.calendar.google.com",
         "classes": ["third", "first", "kindergarten"]
-    },
-    {
-        "title": "movement",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
-        "teacher1_google_calendar_id": "thecoopschool.org_js3jm91g13bm9e0lnttlromg8o@group.calendar.google.com",
-        "classes": ["fourth", "bumblebees", "kindergarten"]
     },
     {
         "title": "art/woodshop",
