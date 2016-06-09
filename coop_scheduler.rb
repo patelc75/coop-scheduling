@@ -293,9 +293,15 @@ def fetch_existing_calendar(calendar_id)
 end
 
 def write_cached_calendars_to_gcal
-  $cached_calendars.each do |key, cal|
-    create_new_cal_and_write_to_gcal_api(cal)
-  end  
+  puts "Do want to create these calendars to the Google API? (y/n)"
+  has_token = $stdin.gets.chomp
+
+  if has_token.downcase == 'y'
+    $cached_calendars.each do |key, cal|
+      create_new_cal_and_write_to_gcal_api(cal)
+      break
+    end
+  end
 end
 
 def create_new_cal_and_write_to_gcal_api(input_cal) 
@@ -355,5 +361,5 @@ end
 
 print_cached_calendars()
 
-#write_cached_calendars_to_gcal()
+write_cached_calendars_to_gcal()
 
