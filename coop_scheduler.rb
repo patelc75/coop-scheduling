@@ -109,13 +109,21 @@ def print_event_info (cal, events, start_date, end_date)
   puts 
 end
 
+
+# Method: Return true if there is a conflict. These 3 scanerios for a "new event" are covered in the conditional logic
+#     <---- existing event ----> 
+#       <--- new event #1  --->          
+#          <------ new event #2 ------>
+#  <------ new event #3 ------>          
 def look_for_conflict(event_to_check, cal)
 
   return false if cal.nil?
   #e event_to_check_start_time.getlocal.to_s + " to " + event_to_check_end_time.getlocal.to_s
   cal.fetched_events.each do |event|
-    if ((event_to_check.start_time_object >= event.start_time_object && event_to_check.start_time_object < event.end_time_object) || (event_to_check.end_time_object > event.start_time_object && event_to_check.end_time_object <= event.end_time_object))
-      return true
+    if ((event_to_check.start_time_object >= event.start_time_object && event_to_check.start_time_object < event.end_time_object) || 
+        (event_to_check.end_time_object > event.start_time_object && event_to_check.end_time_object <= event.end_time_object) || 
+        (event_to_check.start_time_object <= event.start_time_object && event_to_check.end_time_object >= event.end_time_object)) 
+     return true
     end
   end
   return false
