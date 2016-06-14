@@ -275,7 +275,8 @@ def fetch_existing_calendar(calendar_id)
              :client_id     => ENV["GCAL_CLIENT_ID"],
              :client_secret => ENV["GCAL_CLIENT_SECRET"],
              :calendar      => calendar_id,
-             :redirect_url  => ENV["GCAL_REDIRECT_URL"]
+             :redirect_url  => ENV["GCAL_REDIRECT_URL"],
+             :refresh_token => ENV["GCAL_REFRESH_TOKEN"] # this is what Google uses 
           )
 
     #Uncomment only if hard coded refresh token doesn't work
@@ -370,4 +371,3 @@ end
 print_cached_calendars()
 
 write_cached_calendars_to_gcal()
-
