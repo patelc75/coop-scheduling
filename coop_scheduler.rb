@@ -333,7 +333,7 @@ def create_new_cal_and_write_to_gcal_api(input_cal)
       output_event.start_time = input_event.start_time_object
       output_event.end_time = input_event.end_time_object
       output_event.location = "40 Brevoort Place, Brooklyn, NY 11216"
-      output_event.recurrence = {'freq' => 'weekly', 'byday' => 'mo,tu,we,th,fr'}
+      output_event.recurrence = {'freq' => 'weekly'}
       #output_event.save
     end    
   end
