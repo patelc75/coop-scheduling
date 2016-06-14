@@ -82,13 +82,13 @@ def prompt_for_refresh_token(cal)
     # A user needs to approve access in order to work with their calendars.
     puts "Visit the following web page in your browser and approve access."
     puts cal.authorize_url
-    puts "\nCopy the code that Google returned and paste it here:"
+    puts "\nCopy the code that Google returned and paste it here (the code you are pasting here is NOT the refresh token:"
 
     # Pass the ONE TIME USE access code here to login and get a refresh token that you can use for access from now on.
     refresh_token = cal.login_with_auth_code( $stdin.gets.chomp )
 
-    puts "\nMake sure you SAVE YOUR REFRESH TOKEN so you don't have to prompt the user to approve access again."
-    puts "your refresh token is:\n\t#{refresh_token}\n"
+    puts "\nMake sure you update your environment variable in your .bashrc or .bash_profile with this statement: export GCAL_REFRESH_TOKEN=<token>"
+    puts "Your refresh token is:\n\t#{refresh_token}\n"
     puts "Press return to continue"
     $stdin.gets.chomp
 
