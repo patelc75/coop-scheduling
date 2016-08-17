@@ -11,7 +11,21 @@ Requirements: [Google Doc](https://docs.google.com/document/d/1qBIYSTEUu-8jmeWuv
 
 We are using this Ruby google calendar wrapper: https://github.com/northworld/google_calendar
 
-## Usage
+## Usage instructions
+
+Follow these instructions every time a schedule needs to be generated (usually before the semester starts) 
+
+### Staff instructions
+
+1. Log into `coopcalendars@thecoopschool.org` Google account (ask for credentials via LastPass if you don't have them)
+1. Update all Google calendars that include the word "In" (eg. `Class In | Pre-K | Bumblebees`, `Special In | Gym Shanecka`) for both specialist and class schedules
+1. Log into your github.com account (If no account, create an account on github.com and ask for permissions on the [coop-scheduling repo](https://github.com/patelc75/coop-scheduling))
+1. Update [classes.json](https://github.com/patelc75/coop-scheduling/blob/master/classes.json) to add or remove classe schedules (Pre-K, K, 1st, etc)
+1. Update [specials.json](https://github.com/patelc75/coop-scheduling/blob/master/specials.json) to assign specific specials to specfic classes (eg. assign "movement" to "bumblebees", "fourth", "kindergarten"). 
+1. Confirm calendar ids in both .json files match the IDs in Google Calendar
+
+
+### Developer instructions
 
 1. Log into to Google Calendar (coopcalendars@thecoopschool.org). Get password from Mandy or Chirag via LastPass
 1. Ask Chirag for the Google Cal auth env variables via LastPass. 
@@ -24,7 +38,9 @@ We are using this Ruby google calendar wrapper: https://github.com/northworld/go
 1. When finished, hide the "Class In" or "Special In" calendars in Google Cal account and look for the "Class Out" and "Special Out" calendars
 1. See Github issues for pending development still needed
 
-## Onboarding Instructions
+
+
+## Developer onboarding instructions
 
 * Install these gems:
 
