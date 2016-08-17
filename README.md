@@ -20,8 +20,8 @@ Follow these instructions every time a schedule needs to be generated (usually b
 1. Log into `coopcalendars@thecoopschool.org` Google account (ask for credentials via LastPass if you don't have them)
 1. Update all Google calendars that include the word "In" (eg. `Class In | Pre-K | Bumblebees`, `Special In | Gym Shanecka`) for both specialist and class schedules
 1. Log into your github.com account (If no account, create an account on github.com and ask for permissions on the [coop-scheduling repo](https://github.com/patelc75/coop-scheduling))
-1. Update [classes.json](https://github.com/patelc75/coop-scheduling/blob/master/classes.json) to add or remove classe schedules (Pre-K, K, 1st, etc)
-1. Update [specials.json](https://github.com/patelc75/coop-scheduling/blob/master/specials.json) to assign specific specials to specfic classes (eg. assign "movement" to "bumblebees", "fourth", "kindergarten"). 
+1. Update [classes.json](https://github.com/patelc75/coop-scheduling/blob/master/classes.json) to add or remove classe schedules (Pre-K, K, 1st, etc) DONE
+1. Update [specials.json](https://github.com/patelc75/coop-scheduling/blob/master/specials.json) to assign specific specials to specfic classes (eg. assign "movement" to "bumblebees", "fourth", "kindergarten"). DONE
 1. Confirm calendar ids in both .json files match the IDs in Google Calendar
 
 
