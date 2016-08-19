@@ -23,7 +23,7 @@ Follow these instructions every time a schedule needs to be generated (usually b
 1. Update [classes.json](https://github.com/patelc75/coop-scheduling/blob/master/classes.json) to add or remove classe schedules (Pre-K, K, 1st, etc) 
 1. Update [specials.json](https://github.com/patelc75/coop-scheduling/blob/master/specials.json) to assign specific specials to specfic classes (eg. assign "movement" to "bumblebees", "fourth", "kindergarten"). 
 1. Pretty please confirm google_calendar_id in classes.json and teacher1_google_calendar_id are correct in specials.json are CORRECT
-
+1. If the schedules have too many specials on a single day, add a "Do not schedule" slot on that day in the classes "Class In" Google calendar
 
 ### Developer instructions
 
