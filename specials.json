@@ -1,5 +1,19 @@
 [
     {
+        "title": "spanish",
+        "num_per_week": "5",
+        "duration_in_mins": "30 mins",
+        "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
+        "classes": ["kindergarten", "first", "second", "third", "fourth"]
+    },  
+    {
+        "title": "library",
+        "num_per_week": "1",
+        "duration_in_mins": "45 mins",
+        "teacher1_google_calendar_id": "thecoopschool.org_bhtul8h0qvns79e9nhj9c8mp48@group.calendar.google.com",
+        "classes": ["kindergarten", "bumblebees", "fourth"]
+    },  
+    {
         "title": "movement",
         "num_per_week": "1",
         "duration_in_mins": "45 mins",
@@ -14,13 +28,6 @@
         "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes": ["dragonflies"]
     },
-    {
-        "title": "spanish",
-        "num_per_week": "5",
-        "duration_in_mins": "30 mins",
-        "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
-        "classes": ["kindergarten", "first", "second", "third", "fourth"]
-    },  
     {
         "title": "science/creative making",
         "num_per_week": "1",
@@ -71,14 +78,7 @@
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com", 
         "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes":  ["second", "third", "first"]
-    },   
-    {
-        "title": "library",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
-        "teacher1_google_calendar_id": "thecoopschool.org_bhtul8h0qvns79e9nhj9c8mp48@group.calendar.google.com",
-        "classes": ["kindergarten", "bumblebees", "fourth"]
-    },    
+    },     
     {
         "title": "music",
         "num_per_week": "1",

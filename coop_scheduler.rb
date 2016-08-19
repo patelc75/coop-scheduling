@@ -14,6 +14,12 @@ require 'chronic'
 require 'time_difference'
 #require 'ruby-prof'
 
+#Constants
+$monday_start = Chronic.parse "monday aug 15 8am" #=> 2015-06-08 09:00:00 -0400
+five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
+$friday_end = $monday_start + five_day_duration
+$daily_ending_time = "3:30pm"
+
 def pause_for_keystroke
   puts 
   puts "Press any key to continue"
@@ -67,11 +73,6 @@ def print_cached_calendars
     cal.pretty_print
   end  
 end
-
-$monday_start = Chronic.parse "monday june 6 8am" #=> 2015-06-08 09:00:00 -0400
-five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
-$friday_end = $monday_start + five_day_duration
-$daily_ending_time = "3:30pm"
 
 def prompt_for_refresh_token(cal)
   puts "Do you already have a refresh token? (y/n)"
@@ -378,5 +379,7 @@ specials.each do |special|
 end
 
 print_cached_calendars()
+
+puts "\nBe sure to search for 'Could not schedule' messages in the logs above\n"
 
 write_cached_calendars_to_gcal()
