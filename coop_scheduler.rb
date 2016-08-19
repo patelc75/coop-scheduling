@@ -210,7 +210,16 @@ end
 
 
 def define_starting_slot(special, starting_slot, class_cal)
-  special_title = "-----" + special["title"].upcase + ": " + class_cal.summary.split("|")[2].strip.upcase + "-----"
+  if class_cal.summary
+    class_summary = class_cal.summary.split("|")[2].strip.upcase
+  else
+    puts "special_title: #{special_title}"
+    puts "special['title']: #{special["title"].upcase}"
+    puts "class_cal.summary: #{class_cal.summary}"  
+    raise "class_cal.summary is nil. Review classes.json and check all of the google_calendar_ids"
+  end
+
+  special_title = "-----" + special["title"].upcase + ": " + class_summary + "-----"
 
   special_duration = special["duration_in_mins"].to_i
 
