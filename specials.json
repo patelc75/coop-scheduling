@@ -51,13 +51,6 @@
         "classes": ["fourth"]
     },  
     {
-                "title": "creative making optional open studio time",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
-        "teacher1_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
-        "classes": ["kindergarten", "first", "second", "third", "fourth"]
-    },  
-    {
         "title": "library",
         "num_per_week": "1",
         "duration_in_mins": "45 mins",
