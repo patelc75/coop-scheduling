@@ -27,24 +27,23 @@ Follow these instructions every time a schedule needs to be generated (usually b
 
 ### Developer instructions
 
-1. Log into to Google Calendar (coopcalendars@thecoopschool.org). Get password from Mandy or Chirag via LastPass
-1. Ask Chirag for the Google Cal auth env variables via LastPass. 
-1. Install gems below
 1. Confirm `specials.json` and `classes.json` are correct 
-1. Update $monday_start in `rdebug coop_scheduler.rb` and select the Monday's date of the current week
-1. Run `rdebug coop_scheduler.rb` or `ruby coop_scheduler.rb`
-1. Look for 'Could not schedule' messages in the console log after running. If found, you can split up or re-arrange the specials in `specials.json` for better load balancing of classes and re-run 
+1. Update $monday_start in `coop_scheduler.rb` and select the Monday's date of the current week
+1. Clear the buffer in your terminal (In iTerm,  do both `Edit → Clear Buffer` and `Edit → Clear Scrollback Buffer`)
+1. Run `rdebug coop_scheduler.rb` or `ruby coop_scheduler.rb` 
 1. If `Google::HTTPAuthorizationFailed` error occurs, uncomment the `prompt_for_refresh_token(cal)` line in `ruby coop_scheduler.rb` to create a new refresh token
 1. Do not use the token from the GCal site, first paste it into the ruby prompt and it will output the refresh token to use your env variables (eg. `export GCAL_REFRESH_TOKEN=<token>`)
-1. In the output look for the "Could not Schedule" string for specials that could not be scheduled
-1. When finished, hide the "Class In" or "Special In" calendars in Google Cal account and look for the "Class Out" and "Special Out" calendars
+1. Look for 'Could not schedule' messages in the console log after running. If found, you can split up or re-arrange the specials in `specials.json` for better load balancing of classes and re-run
+1. Paste the output as a "draft" in a Google Doc (search the Google Doc folder) and have staff member (Mandy) review. Do this multiple times until satisfied.
+1. When final draft complete, hide the "Class In" or "Special In" calendars in Google Cal account, allow script to generate the "Class Out" and "Special Out" Google calendars and confirm them.
+1. Remove the "Do not schedule" slots in the "Out" Google calendars
 1. See Github issues for pending development still needed
-
-
 
 ## Developer onboarding instructions
 
-* Install these gems:
+1. Log into to Google Calendar (coopcalendars@thecoopschool.org). Get password from Mandy or Chirag via LastPass
+1. Ask Chirag for the Google Cal auth env variables via LastPass. 
+1. Install these gems:
 
 ```ruby
 gem install 'google_calendar' #may need to install v0.5 locally (like on Chirag's 11' Mackbook air)
