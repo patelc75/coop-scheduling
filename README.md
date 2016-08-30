@@ -24,6 +24,10 @@ Follow these instructions every time a schedule needs to be generated (usually b
 1. Update [specials.json](https://github.com/patelc75/coop-scheduling/blob/master/specials.json) to assign specific specials to specfic classes (eg. assign "movement" to "bumblebees", "fourth", "kindergarten"). 
 1. Pretty please confirm google_calendar_id in classes.json and teacher1_google_calendar_id are correct in specials.json are CORRECT
 1. If the schedules have too many specials on a single day, add a "Do not schedule" slot on that day in the classes "Class In" Google calendar OR you can update by hand when developer generates the "Class Out" calendars after the final draft
+1. After the Google Calendars have been created, go through each "Out" calendar (eg. `Class Out | Second Grade` and `Special Out | Gym Shanecka`
+  * Remove each slot that says "Do not schedule" 
+  * Make manual tweaks (do **not** drag n' drop because each calendar event is a recurring event)
+  * Invite each teacher and specalist to their Google Calendar (eg. Invite `rotem@thecoopschool.org` to `Special Out | Creative Rotem` Google calendar
 
 ### Developer instructions
 
