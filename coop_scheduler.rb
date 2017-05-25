@@ -247,6 +247,7 @@ def find_empty_slot_with_no_conflict(special_to_schedule, special_duration, clas
 
   while(special_to_schedule.end_time_object < $friday_end)
     #print Chronic.parse(special_to_schedule.start_time).getlocal.strftime("%H:%M%p %Z") + ", "
+    # if (special_to_schedule) #check for allowed_days in here
     class_conflict = look_for_conflict(special_to_schedule, class_cal_input)
     if class_conflict == false
       specialist_conflict  = look_for_conflict(special_to_schedule, specialist_cal_input1)
