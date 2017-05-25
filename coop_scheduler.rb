@@ -15,7 +15,7 @@ require 'time_difference'
 #require 'ruby-prof'
 
 #Constants
-$monday_start = Chronic.parse "monday sept 11 8am" #=> 2015-06-08 09:00:00 -0400
+$monday_start = Chronic.parse "monday sept 4 8am" #=> 2015-06-08 09:00:00 -0400
 five_day_duration = 5*24*60*60-12 #goes to EOD Friday (8pm)
 $friday_end = $monday_start + five_day_duration
 $daily_ending_time = "3:30pm"
