@@ -2,7 +2,7 @@
     {
         "title": "science/creative making",
         "num_per_week": "2",
-        "duration_in_mins": "45 mins",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com",
         "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes":  ["second", "third", "fourth", "first"]
@@ -10,7 +10,7 @@
     {
         "title": "science/creative making",
         "num_per_week": "2",
-        "duration_in_mins": "45 mins",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com",
         "teacher2_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes": ["kindergarten"]
@@ -38,8 +38,8 @@
     },
     {
         "title": "movement",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
+        "num_per_week": "2",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_js3jm91g13bm9e0lnttlromg8o@group.calendar.google.com",
         "classes": ["fifth", "fourth", "kindergarten"]
     },
@@ -52,36 +52,36 @@
     },
     {
         "title": "music",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
+        "num_per_week": "2",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_f6bkpnu519a6n5fvk4g2ud7l4k@group.calendar.google.com",
         "classes": ["fifth", "second", "fourth"]
     },
     {
         "title": "movement",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
+        "num_per_week": "2",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_js3jm91g13bm9e0lnttlromg8o@group.calendar.google.com",
         "classes": ["third", "first", "second"]
     },
     {
         "title": "music",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
+        "num_per_week": "2",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_f6bkpnu519a6n5fvk4g2ud7l4k@group.calendar.google.com",
         "classes": ["third", "first", "kindergarten"]
     },
     {
         "title": "creative making",
         "num_per_week": "1",
-        "duration_in_mins": "45 mins",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ge2j365ho853st500ds4ja13ls@group.calendar.google.com",
         "classes": ["fifth"]
     },
     {
         "title": "science",
         "num_per_week": "1",
-        "duration_in_mins": "45 mins",
+        "duration_in_mins": "60 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_go1ppbdbrkge1gluj5gn1mqblo@group.calendar.google.com",
         "classes": ["fifth"]
     }
