@@ -18,14 +18,14 @@
     {
         "title": "spanish",
         "num_per_week": "5",
-        "duration_in_mins": "30 mins",
+        "duration_in_mins": "40 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
         "classes": ["kindergarten", "first", "second", "third"]
     },
     {
         "title": "spanish",
         "num_per_week": "2",
-        "duration_in_mins": "45 mins",
+        "duration_in_mins": "55 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
         "classes": ["fourth" , "fifth"]
     },
