@@ -18,14 +18,14 @@
     {
         "title": "spanish",
         "num_per_week": "5",
-        "duration_in_mins": "30 mins",
+        "duration_in_mins": "40 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
         "classes": ["kindergarten", "first", "second", "third"]
     },
     {
         "title": "spanish",
         "num_per_week": "2",
-        "duration_in_mins": "45 mins",
+        "duration_in_mins": "55 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_ou753mth9uvjjdh5kqhs1gfpvs@group.calendar.google.com",
         "classes": ["fourth" , "fifth"]
     },
@@ -42,13 +42,6 @@
         "duration_in_mins": "55 mins",
         "teacher1_google_calendar_id": "thecoopschool.org_js3jm91g13bm9e0lnttlromg8o@group.calendar.google.com",
         "classes": ["fifth", "fourth", "kindergarten"]
-    },
-    {
-        "title": "library",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
-        "teacher1_google_calendar_id": "thecoopschool.org_bhtul8h0qvns79e9nhj9c8mp48@group.calendar.google.com",
-        "classes": ["first", "second", "third"]
     },
     {
         "title": "music",
