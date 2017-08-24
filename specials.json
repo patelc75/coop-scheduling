@@ -30,13 +30,6 @@
         "classes": ["fourth" , "fifth"]
     },
     {
-        "title": "library",
-        "num_per_week": "1",
-        "duration_in_mins": "45 mins",
-        "teacher1_google_calendar_id": "thecoopschool.org_bhtul8h0qvns79e9nhj9c8mp48@group.calendar.google.com",
-        "classes": ["kindergarten", "fifth", "fourth"]
-    },
-    {
         "title": "movement",
         "num_per_week": "2",
         "duration_in_mins": "55 mins",
